@@ -1,6 +1,8 @@
 package dados;
 
+import java.io.File;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 
 public class Disco {
     private Double Porcentagem_de_Uso_do_Disco;
@@ -8,12 +10,51 @@ public class Disco {
 
     private Double tamanho_disponivel_do_disco;
 
-    public Disco(Double porcentagem_de_Uso_do_Disco, Double tamanho_Total_do_Disco, Double tamanho_disponivel_do_disco) {
-        Porcentagem_de_Uso_do_Disco = porcentagem_de_Uso_do_Disco;
-        Tamanho_Total_do_Disco = tamanho_Total_do_Disco;
-        this.tamanho_disponivel_do_disco = tamanho_disponivel_do_disco;
+    public Disco() {
+        Porcentagem_de_Uso_do_Disco = 0.0;
+        Tamanho_Total_do_Disco = 0.0;
+        this.tamanho_disponivel_do_disco = 0.0;
     }
 
+    public Double total_tamanho_disco(){
+        File disk = File.listRoots()[0];
+        long total_disco = disk.getTotalSpace();
+        Double total_disco_em_GB = total_disco / 1073741824.0;
+        DecimalFormat df = new DecimalFormat("#.##");
+        String total_tamanho_disco_formatado = df.format(total_disco_em_GB);
+        total_tamanho_disco_formatado = total_tamanho_disco_formatado.replace("," , ".");
+
+        this.tamanho_disponivel_do_disco = Double.parseDouble(total_tamanho_disco_formatado);
+        return Double.parseDouble(total_tamanho_disco_formatado);
+    }
+
+    public Double percentual_uso_do_disco(){
+        File disco = File.listRoots()[0];
+
+        long total_disco = disco.getTotalSpace();
+        long total_usado = disco.getUsableSpace();
+
+        Double percentual_uso = (100.0 * (total_disco - total_usado)) / total_disco;
+
+        DecimalFormat df = new DecimalFormat("#.##");
+        String total_percentual_uso_disco_formatado = df.format(percentual_uso);
+        total_percentual_uso_disco_formatado = total_percentual_uso_disco_formatado.replace("," , ".");
+
+        this.Porcentagem_de_Uso_do_Disco = Double.parseDouble(total_percentual_uso_disco_formatado);
+        return Double.parseDouble(total_percentual_uso_disco_formatado);
+
+    }
+
+
+    public Double tamanho_disponivel_do_disco(){
+        File disco = File.listRoots()[0];
+        long tamanho_disponivel_do_disco = disco.getFreeSpace();
+        double tamanho_disponivel_do_disco_formatado_gb = tamanho_disponivel_do_disco / 1073741824.0;
+        DecimalFormat df = new DecimalFormat("#.0");
+        String tamanho_disponivel_do_disco_formatado = df.format(tamanho_disponivel_do_disco_formatado_gb);
+        tamanho_disponivel_do_disco_formatado = tamanho_disponivel_do_disco_formatado.replace("," , ".");
+        return Double.parseDouble(tamanho_disponivel_do_disco_formatado);
+    }
     public Double getPorcentagem_de_Uso_do_Disco() {
         return Porcentagem_de_Uso_do_Disco;
     }

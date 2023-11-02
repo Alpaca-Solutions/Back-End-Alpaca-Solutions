@@ -1,7 +1,10 @@
 dados\Dados.class
-dados\CPU.class
+dados\Cliente.class
+dados\Processador.class
 dados\Memoria.class
+dados\Maquina.class
 dados\Dados$1.class
 dados\Rede.class
 dados\Conexao.class
 dados\Disco.class
+dados\Slack.class
