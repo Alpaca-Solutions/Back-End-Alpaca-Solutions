@@ -22,7 +22,7 @@ Este projeto consiste em um serviço de monitoramento de servidores de faculdade
 <div>
 <img src="https://s2-techtudo.glbimg.com/twoewJmwpMgtGPcRPP8SxFlDVmM=/0x0:695x393/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2021/P/f/y52r4ySZWLkJjEhKLhgw/2014-11-14-java-logo.jpg" alt="Texto Alternativo" width="200px">
 <img src="https://assets-global.website-files.com/621c8d7ad9e04933c4e51ffb/624fd2870c9d7634deb2576c_The%20Slack%20logo.svg" alt="Slack width="200px">
-<img src="https://w7.pngwing.com/pngs/862/624/png-transparent-aws-vector-brand-logos-icon.png" alt="AWS" width="200px">
+<img src="[https://w7.pngwing.com/pngs/862/624/png-transparent-aws-vector-brand-logos-icon.png](https://creazilla-store.fra1.digitaloceanspaces.com/icons/3253504/aws-icon-sm.png)" alt="AWS" width="200px">
 <img src="https://miro.medium.com/v2/resize:fit:474/0*JiC2A_i-podLkqA3" alt="Texto Alternativo" width="200px">
 
 </div>
