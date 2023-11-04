@@ -14,13 +14,11 @@ import oshi.software.os.OSFileStore;
 import oshi.software.os.OSProcess;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Time;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class Dados {
     public static void main(String[] args) {
@@ -30,6 +28,7 @@ public class Dados {
         Scanner leitor = new Scanner(System.in);
         String continuar;
         Timer tempo = new Timer();
+        Alertas alerta = new Alertas();
 
 
 
@@ -112,6 +111,18 @@ public class Dados {
                 Processador processador01 = new Processador();
 
                 dados.Processador processador = new dados.Processador(processador01.getUso());
+
+                List<dados.Processador> lista_processador = new ArrayList<>();
+
+                lista_processador.add(processador);
+
+                try {
+                    alerta.alerta_prcessador(lista_processador);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
 
 
                 System.out.println(processador);

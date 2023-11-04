@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class Slack {
 
     private static final HttpClient client = HttpClient.newHttpClient();
-    private static final String URL = "https://hooks.slack.com/services/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";
+    private static final String URL = "https://hooks.slack.com/services/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";
 
     public static void sendMessage(JSONObject content) throws IOException, InterruptedException {
 
@@ -28,5 +28,14 @@ public class Slack {
 
         System.out.println(String.format("Status: %s", response.statusCode()));
         System.out.println(String.format("Response: %s", response.body()));
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+
+        JSONObject json = new JSONObject();
+
+        json.put("text", "Api no alpaca_solutions");
+
+        Slack.sendMessage(json);
     }
 }
