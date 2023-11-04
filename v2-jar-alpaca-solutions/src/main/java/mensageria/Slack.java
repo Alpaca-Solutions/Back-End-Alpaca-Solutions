@@ -1,4 +1,4 @@
-package dados;
+package mensageria;
 
 import java.io.IOException;
 import java.net.URI;

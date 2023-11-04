@@ -1,4 +1,4 @@
-package dados;
+package processador;
 
 import com.github.britooo.looca.api.core.Looca;
 

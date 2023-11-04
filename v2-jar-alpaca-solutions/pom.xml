@@ -75,7 +75,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>dados.Dados</mainClass>
+                            <mainClass>teste_classes.Dados</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -90,7 +90,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>dados.Dados</mainClass>
+                            <mainClass>teste_classes.Dados</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

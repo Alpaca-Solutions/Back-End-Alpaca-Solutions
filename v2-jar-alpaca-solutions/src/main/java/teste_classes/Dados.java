@@ -1,23 +1,17 @@
-package dados;
+package teste_classes;
 
 import com.github.britooo.looca.api.core.Looca;
-import com.github.britooo.looca.api.group.discos.Volume;
 import com.github.britooo.looca.api.group.memoria.Memoria;
 import com.github.britooo.looca.api.group.processador.Processador;
-import com.github.britooo.looca.api.group.rede.RedeInterface;
 import com.github.britooo.looca.api.group.sistema.Sistema;
-import com.github.britooo.looca.api.group.temperatura.Temperatura;
+import conexao_banco_dados.Conexao;
+import disco.Disco;
+import maquina.Maquina;
+import mensageria.Alertas;
 import org.springframework.jdbc.core.JdbcTemplate;
-import oshi.software.os.OSFileStore;
+import rede.Rede;
 
-import oshi.software.os.OSFileStore;
-import oshi.software.os.OSProcess;
-
-import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Time;
 import java.util.*;
 
 public class Dados {
@@ -64,7 +58,7 @@ public class Dados {
                 Long memoria_em_uso = memoria.getEmUso();
                 Long memoria_diponivel = memoria.getDisponivel();
                 Long memoria_total = memoria.getTotal();
-                dados.Memoria  dados_memoria = new dados.Memoria(memoria_em_uso , memoria_diponivel, memoria_total);
+                memoria.Memoria dados_memoria = new memoria.Memoria(memoria_em_uso , memoria_diponivel, memoria_total);
 
                 dados_memoria.setMemoria_em_uso(dados_memoria.calcular_memoria_em_uso(memoria_em_uso));
                 dados_memoria.setMemoria_Disponivel(dados_memoria.calcular_memoria_disponivel(memoria_diponivel));
@@ -110,9 +104,9 @@ public class Dados {
 
                 Processador processador01 = new Processador();
 
-                dados.Processador processador = new dados.Processador(processador01.getUso());
+                processador.Processador processador = new processador.Processador(processador01.getUso());
 
-                List<dados.Processador> lista_processador = new ArrayList<>();
+                List<processador.Processador> lista_processador = new ArrayList<>();
 
                 lista_processador.add(processador);
 

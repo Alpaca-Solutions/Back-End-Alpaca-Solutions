@@ -1,4 +1,4 @@
-package dados;
+package disco;
 
 import java.io.File;
 import java.math.BigDecimal;

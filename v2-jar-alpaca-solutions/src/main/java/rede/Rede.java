@@ -1,4 +1,4 @@
-package dados;
+package rede;
 
 import com.github.britooo.looca.api.core.Looca;
 import com.github.britooo.looca.api.group.rede.RedeInterface;

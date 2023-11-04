@@ -1,8 +1,12 @@
-package dados;
+package mensageria;
 
 import java.io.IOException;
 import java.util.List;
 
+import disco.Disco;
+import memoria.Memoria;
+import processador.Processador;
+import rede.Rede;
 import org.json.JSONObject;
 
 public class Alertas {
@@ -21,7 +25,7 @@ public class Alertas {
                 json.put("text" , "Processador excedeu o limite :fire:");
             }
         }
-        dados.Slack.sendMessage(json);
+        Slack.sendMessage(json);
     }
 
 }

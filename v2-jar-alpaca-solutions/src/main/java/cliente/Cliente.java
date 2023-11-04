@@ -1,4 +1,4 @@
-package dados;
+package cliente;
 
 public class Cliente {
 

@@ -1,4 +1,4 @@
-package dados;
+package conexao_banco_dados;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;

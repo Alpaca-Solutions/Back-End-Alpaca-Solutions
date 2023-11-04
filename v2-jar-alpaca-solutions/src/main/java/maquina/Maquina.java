@@ -1,4 +1,4 @@
-package dados;
+package maquina;
 
 public class Maquina {
 
