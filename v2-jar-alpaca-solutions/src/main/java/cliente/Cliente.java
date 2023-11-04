@@ -6,6 +6,9 @@ public class Cliente {
 
     private String senha;
 
+    public Cliente() {
+
+    }
     public Cliente(String email, String senha) {
         this.email = email;
         this.senha = senha;

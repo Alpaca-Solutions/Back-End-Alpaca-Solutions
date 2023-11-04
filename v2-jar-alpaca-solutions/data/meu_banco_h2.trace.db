@@ -1,0 +1,3 @@
+2023-11-04 13:22:56.365574-03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "CLIENTE" not found; SQL statement:
+SELECT 'cliente' as tipo_cliente, cliente.idcliente as id, cliente.nome as nome, cliente.email as email, cliente.senha as senha, endereco.idendereco FROM cliente JOIN endereco ON idendereco = fkendereco_cliente WHERE cliente.email = ? AND cliente.senha = ? UNION ALL SELECT 'usuario' as tipo_cliente, usuario.idusuario as id, usuario.nome as nome, usuario.email as email, usuario.senha as senha, endereco.idendereco FROM usuario JOIN cliente ON idcliente = fkusuario_cliente JOIN endereco ON endereco.idendereco = cliente.fkendereco_cliente WHERE usuario.email = ? AND usuario.senha = ? [42102-222]

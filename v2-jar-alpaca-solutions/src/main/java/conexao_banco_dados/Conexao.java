@@ -18,15 +18,15 @@ public class Conexao {
         */
 
 
-        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         /*
              Exemplo de string de conexões:
                 jdbc:mysql://localhost:3306/mydb <- EXEMPLO PARA MYSQL
                 jdbc:sqlserver://localhost:1433;database=mydb <- EXEMPLO PARA SQL SERVER
         */
-        dataSource.setUrl("jdbc:h2:./data/meu_banco_h2");
-        dataSource.setUsername("");
-        dataSource.setPassword("");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/AlpacaDB");
+        dataSource.setUsername("aluno");
+        dataSource.setPassword("aluno");
 
         conexaoDoBanco = new JdbcTemplate(dataSource);
     }
