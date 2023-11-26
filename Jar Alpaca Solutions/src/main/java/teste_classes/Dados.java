@@ -143,8 +143,6 @@ public class Dados {
                     System.out.println(statusMaquina);
                     System.out.println(maquina01);
 
-                    System.out.println("SO É " + looca.getSistema().getSistemaOperacional());
-
 
                     // Cpu
 
