@@ -2,7 +2,6 @@ package teste_classes;
 
 import cliente.Cliente;
 import com.github.britooo.looca.api.core.Looca;
-import com.github.britooo.looca.api.group.discos.DiscoGrupo;
 import com.github.britooo.looca.api.group.memoria.Memoria;
 import com.github.britooo.looca.api.group.processador.Processador;
 import com.github.britooo.looca.api.group.sistema.Sistema;
@@ -201,20 +200,15 @@ public class Dados {
                     insertMaquina.inserirMedicoes(dados_memoria, rede, processador, disco01, fk);
 
                     insertMaquina.InserirTabelaConfiguracoes();
-                    insertMaquina.Alertas(dados_memoria ,disco01 ,rede, fk_maquina);
+                    insertMaquina.Alertas(dados_memoria ,disco01 ,rede,processador, fk_maquina);
                     try {
-                        alerta.AlertaMemoria(insertMaquina.AlertaMemoria(fk));
+                        alerta.Alerta(insertMaquina.AlertaMemoria(fk));
                     } catch (IOException | InterruptedException e) {
                         throw new RuntimeException(e);
                     }
 
-
-
-
                 }
             };
-
-
 
             long delay_de_tempo = 0;
             long tempo_carregar = 3000;

@@ -221,7 +221,7 @@ public class ConexaoBancoDados {
 
 
 
-    public void Alertas(Memoria memoria,Disco disco,Rede rede, Integer fk_computador) {
+    public void Alertas(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador) {
         Conexao conexao = new Conexao();
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Date dataHoraAtual = new Date();
@@ -234,6 +234,9 @@ public class ConexaoBancoDados {
         String tipoComponenteM = "Memória";
         String tipoComponenteD = "Disco";
         String tipoComponenteR = "Rede";
+        String tipoComponenteP = "Processador";
+        String mensagemAlertaProcessador = "\"Atenção! O percentual de uso do processador está acima do normal. Recomenda-se verificar a causa desse aumento.\"\n";
+        String mensagemAlertaCriticoProcessador = "\"Estado Crítico! O percentual de uso do processador atingiu um nível perigoso. Ações imediatas são necessárias para evitar problemas de desempenho.\"\n";
         String mensagemAlertaRede = "Baixa atividade na rede.";
         String mensagemCriticoRede = "Alta atividade na rede.";
         String mensagemMemoriaCritico = "Estado crítico! O percentual de uso da memória está acima de " + limiteCritico + "%";
@@ -249,8 +252,8 @@ public class ConexaoBancoDados {
 
 
         // Calcula a média entre bytes recebidos e bytes enviados
-        double limiteInferiorRede = 1000000;
-        double limiteSuperiorRede = 1000000000;
+        double limiteInferiorRede = 1;
+        double limiteSuperiorRede = 1000;
         Double mediaDeRede = (rede.getQuantidade_bytes_enviados() + rede.getQuantidade_bytes_enviados()) / 2.0;
 
         // alerta de memória
@@ -289,6 +292,20 @@ public class ConexaoBancoDados {
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
                     "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual);
+        }
+
+        processador.setPercentual_uso_do_processador(85.0);
+        if(processador.getPercentual_uso_do_processador() >= limiteAlerta){
+            con.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaProcessador, minimoMemoria, dataHoraAtual);
+        }
+        else if(processador.getPercentual_uso_do_processador() >= limiteCritico){
+            con.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaCriticoProcessador, minimoMemoria, dataHoraAtual);
         }
     }
 

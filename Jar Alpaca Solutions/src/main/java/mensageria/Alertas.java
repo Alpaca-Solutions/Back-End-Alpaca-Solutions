@@ -17,18 +17,8 @@ public class Alertas {
     List<Disco> disco;
 
     List<Memoria> memoria;
-    public void alerta_prcessador(List<Processador> processadores) throws IOException, InterruptedException {
-        JSONObject json = new JSONObject();
 
-        for(Processador processador01 : processadores){
-            if(processador01.getPercentual_uso_do_processador() > 25){
-                json.put("text" , "Processador excedeu o limite :llama: :fire:");
-            }
-        }
-        Slack.sendMessage(json);
-    }
-
-    public void AlertaMemoria(String mensagem) throws IOException, InterruptedException{
+    public void Alerta(String mensagem) throws IOException, InterruptedException{
         JSONObject json = new JSONObject();
 
 
