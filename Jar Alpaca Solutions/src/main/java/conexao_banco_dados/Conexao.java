@@ -25,8 +25,17 @@ public class Conexao {
         dataSource.setUsername("aluno");
         dataSource.setPassword("aluno");
 
+        // sql server
+
+//        dataSource.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//        dataSource.setUrl("jdbc:sqlserver://localhost:1433;databaseName=AlpacaDB");
+//        dataSource.setUsername("seuUsuario");
+//        dataSource.setPassword("suaSenha");
+
         conexaoDoBanco = new JdbcTemplate(dataSource);
     }
+
+
 
 
     public JdbcTemplate getConexaoDoBanco(){

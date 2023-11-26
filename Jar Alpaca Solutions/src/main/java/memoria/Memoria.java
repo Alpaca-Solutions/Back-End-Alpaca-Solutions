@@ -1,5 +1,9 @@
 package memoria;
 
+import com.github.britooo.looca.api.core.Looca;
+import com.github.britooo.looca.api.group.processos.Processo;
+import oshi.software.os.OSProcess;
+
 import java.text.DecimalFormat;
 
 public class Memoria {

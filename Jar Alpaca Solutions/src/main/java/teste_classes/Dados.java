@@ -2,11 +2,12 @@ package teste_classes;
 
 import cliente.Cliente;
 import com.github.britooo.looca.api.core.Looca;
+import com.github.britooo.looca.api.group.discos.DiscoGrupo;
 import com.github.britooo.looca.api.group.memoria.Memoria;
 import com.github.britooo.looca.api.group.processador.Processador;
 import com.github.britooo.looca.api.group.sistema.Sistema;
 import conexao_banco_dados.Conexao;
-import conexao_banco_dados.QueryBanco;
+import conexao_banco_dados.ConexaoBancoDados;
 import disco.Disco;
 import maquina.Maquina;
 import mensageria.Alertas;
@@ -14,7 +15,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import rede.Rede;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Dados {
     public static void main(String[] args) {
@@ -39,12 +43,18 @@ public class Dados {
         Cliente cliente = new Cliente(email , senha);
 
 
-        QueryBanco busca_cliente = new QueryBanco();
+        ConexaoBancoDados busca_cliente = new ConexaoBancoDados();
+
+        Map<String, Object> resultados = busca_cliente.buscar_empresa_e_unidade(cliente);
 
         Integer resultado_select_cliente = busca_cliente.Busca_Cliente(cliente);
 
         if(resultado_select_cliente == 200) {
+
             TimerTask task = new TimerTask() {
+                AtomicBoolean insercaoRealizada = new AtomicBoolean(false);
+
+
                 @Override
                 public void run() {
                     Looca looca = new Looca();
@@ -85,17 +95,57 @@ public class Dados {
                     rede.setQuantidade_bytes_enviados(rede.quantidade_bytes_enviados_total());
                     rede.setQuantidade_bytes_recebidos(rede.quantidade_bytes_recebidos_total());
 
-                    System.out.println(rede);
 
+                    System.out.println(rede);
                     // função rede completa :)
 
 
                     // Dados Maquina
 
                     Sistema sisitema01 = new Sistema();
-                    Maquina maquina01 = new Maquina(sisitema01.getSistemaOperacional());
+                    Maquina maquina01 = new Maquina();
 
+                    maquina01.setSistema_Operacional(looca.getSistema().getSistemaOperacional());
+
+                    try {
+                        maquina01.setIpMaquina(maquina01.obterIP());
+                    } catch (UnknownHostException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    try {
+                      maquina01.setNomeMaquina(maquina01.obterNomeMaquina());
+
+                    }
+                    catch (UnknownHostException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
+
+                    // maquina ativa ou não
+
+                    Boolean statusMaquina;
+
+                    try {
+                        boolean temInternet = maquina01.statusMaquina();
+                        if (temInternet) {
+                            statusMaquina = true;
+                        } else {
+                            statusMaquina = false;
+                        }
+                    } catch (MalformedURLException e) {
+                        statusMaquina = false;
+                    } catch (IOException e) {
+                        statusMaquina = false;
+                    }
+
+                    maquina01.setStatusMaquina(statusMaquina);
+                    System.out.println(statusMaquina);
                     System.out.println(maquina01);
+
+                    System.out.println("SO É " + looca.getSistema().getSistemaOperacional());
+
 
                     // Cpu
 
@@ -107,25 +157,64 @@ public class Dados {
 
                     lista_processador.add(processador);
 
-                    try {
-                        alerta.alerta_prcessador(lista_processador);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+
                     System.out.println(processador);
 
 
                     // aqui ele vai fazer a inserção nas 3 tabelas , espero que de certo
+                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados();
 
-                    QueryBanco inserts_dados_maquina = new QueryBanco();
+                    Integer fk_maquina = null;
 
 
-                    inserts_dados_maquina.inserir_Componentes();
+
+
+                    if (!insercaoRealizada.get()) {
+                        // Obtenha idUnidade e idEmpresa do seu método ou de onde você os obtém
+                        Integer idUnidade = (Integer) resultados.get("idUnidade");
+                        Integer idEmpresa = (Integer) resultados.get("idEmpresa");
+
+                        // Inserir dados da máquina
+                        insertMaquina.inserir_dados_maquina(
+                                maquina01.getNomeMaquina(),
+                                maquina01.getIpMaquina(),
+                                maquina01.getSistema_Operacional(),
+                                maquina01.getStatusMaquina(),
+                                idEmpresa,
+                                idUnidade
+                        );
+                        // Inserir tipo de componente
+
+                        insertMaquina.inserir_tipo_componente();
+
+                        List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
+                        fk_maquina = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
+                        insertMaquina.atualizarFkUnidadeMedida(fk_maquina);
+                        insercaoRealizada.set(true);
+                    }
+
+
+
+
+                    List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
+                    Integer fk = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
+                    insertMaquina.inserirMedicoes(dados_memoria, rede, processador, disco01, fk);
+
+                    insertMaquina.InserirTabelaConfiguracoes();
+                    insertMaquina.Alertas(dados_memoria ,disco01 ,rede, fk_maquina);
+                    try {
+                        alerta.AlertaMemoria(insertMaquina.AlertaMemoria(fk));
+                    } catch (IOException | InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
+
 
                 }
             };
+
+
 
             long delay_de_tempo = 0;
             long tempo_carregar = 3000;
@@ -136,7 +225,5 @@ public class Dados {
         else{
             System.out.println("Você ainda não fez cadastro no nosso sistema :(");
         }
-
-
     }
 }

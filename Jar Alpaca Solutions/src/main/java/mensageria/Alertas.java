@@ -22,9 +22,18 @@ public class Alertas {
 
         for(Processador processador01 : processadores){
             if(processador01.getPercentual_uso_do_processador() > 25){
-                json.put("text" , "Processador excedeu o limite :fire:");
+                json.put("text" , "Processador excedeu o limite :llama: :fire:");
             }
         }
+        Slack.sendMessage(json);
+    }
+
+    public void AlertaMemoria(String mensagem) throws IOException, InterruptedException{
+        JSONObject json = new JSONObject();
+
+
+        json.put("text", mensagem + ":llama: :computer:");
+
         Slack.sendMessage(json);
     }
 

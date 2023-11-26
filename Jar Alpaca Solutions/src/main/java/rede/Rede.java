@@ -12,7 +12,7 @@ public class Rede {
 
     private Double quantidade_bytes_enviados;
 
-    public Rede(Double quantidade_bytes_recebidos, Double quantidade_bytes_enviados) {
+    public Rede(Double quantidade_bytes_recebidos, Double quantidade_bytes_enviados, Double quantidade_pacotes_enviados) {
         this.quantidade_bytes_recebidos = quantidade_bytes_recebidos;
         this.quantidade_bytes_enviados = quantidade_bytes_enviados;
     }
@@ -26,14 +26,13 @@ public class Rede {
         List<RedeInterface> dados_de_rede = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         RedeInterface adaptador_com_dados = null;
         long maiorBytesrecebidos = 0;
-        long total_bytes_recebidos = 0;
-        long total_bytes_enviados = 0;
         for (RedeInterface interfaceRede : dados_de_rede) {
             long bytes_recebidos = interfaceRede.getBytesRecebidos();
             if (bytes_recebidos > maiorBytesrecebidos) {
                 adaptador_com_dados = interfaceRede;
                 maiorBytesrecebidos = bytes_recebidos;
             }
+
         }
 
         long bytes_recebidos = adaptador_com_dados.getBytesRecebidos();
@@ -51,8 +50,6 @@ public class Rede {
         List<RedeInterface> dados_de_rede = looca.getRede().getGrupoDeInterfaces().getInterfaces();
         RedeInterface adaptador_com_dados = null;
         long maiorBytesrecebidos = 0;
-        long total_bytes_recebidos = 0;
-        long total_bytes_enviados = 0;
         for (RedeInterface interfaceRede : dados_de_rede) {
             long bytes_enviados = interfaceRede.getBytesRecebidos();
             if (bytes_enviados > maiorBytesrecebidos) {
@@ -69,6 +66,22 @@ public class Rede {
         bytes_em_mb_formatado = bytes_em_mb_formatado.replace("," , ".");
 
         return Double.parseDouble(bytes_em_mb_formatado);
+    }
+
+    public String nome_da_rede(){
+        Looca looca = new Looca();
+        List<RedeInterface> dados_de_rede = looca.getRede().getGrupoDeInterfaces().getInterfaces();
+        RedeInterface adaptador_com_dados = null;
+        long maiorBytesrecebidos = 0;
+        for (RedeInterface interfaceRede : dados_de_rede) {
+            long bytes_enviados = interfaceRede.getBytesRecebidos();
+            if (bytes_enviados > maiorBytesrecebidos) {
+                adaptador_com_dados = interfaceRede;
+                maiorBytesrecebidos = bytes_enviados;
+            }
+        }
+
+        return adaptador_com_dados.getNome();
     }
     public Double getQuantidade_bytes_recebidos() {
         return quantidade_bytes_recebidos;

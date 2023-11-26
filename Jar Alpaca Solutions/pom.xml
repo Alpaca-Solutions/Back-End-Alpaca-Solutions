@@ -16,6 +16,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.oshi</groupId>
+            <artifactId>oshi-core</artifactId>
+            <version>5.7.5</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.britooo</groupId>
             <artifactId>looca-api</artifactId>
             <version>2.2.0</version>
@@ -63,6 +69,16 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.kyriosdata.cid10</groupId>
+            <artifactId>cid10-dados</artifactId>
+            <version>2008.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.daos</groupId>
+            <artifactId>daos-java</artifactId>
+            <version>2.4.1</version>
         </dependency>
     </dependencies>
 

@@ -9,3 +9,4 @@ disco\Disco.class
 memoria\Memoria.class
 processador\Processador.class
 conexao_banco_dados\Conexao.class
+conexao_banco_dados\QueryBanco.class
