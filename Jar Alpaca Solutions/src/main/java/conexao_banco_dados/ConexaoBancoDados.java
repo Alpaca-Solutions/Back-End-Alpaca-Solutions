@@ -8,23 +8,36 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import processador.Processador;
 import rede.Rede;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class ConexaoBancoDados {
+public class ConexaoBancoDados extends Conexao{
         List<Cliente> clienteList;
 
-        public Integer Busca_Cliente(Cliente cliente){
-            Conexao conexao = new Conexao();
-            JdbcTemplate con = conexao.getConexaoDoBanco();
-            Integer resultado =0;
+    public ConexaoBancoDados(boolean usarMySQL) {
+        super(usarMySQL);
+    }
 
-            List<Cliente> resultado_select = con.query("SELECT 'Empresa' AS TipoCliente\n" +
+    public Integer Busca_Cliente(Cliente cliente) {
+        boolean usarMySQL = true;
+
+        Conexao conexao;
+        if (usarMySQL) {
+            conexao = new Conexao(true);
+        } else {
+            conexao = new Conexao(false);
+        }
+
+        JdbcTemplate con = conexao.getConexaoDoBanco();
+
+        Integer resultado = 0;
+        List<Cliente> resultado_select;
+
+        if (usarMySQL) {
+            resultado_select = con.query(
+                    "SELECT 'Empresa' AS TipoCliente\n" +
                             "FROM Empresa\n" +
                             "WHERE email = ? AND senha = ?\n" +
                             "UNION\n" +
@@ -33,6 +46,18 @@ public class ConexaoBancoDados {
                             "WHERE email = ? AND senha = ?;",
                     new Object[]{cliente.getEmail(), cliente.getSenha(), cliente.getEmail(), cliente.getSenha()},
                     new BeanPropertyRowMapper<>(Cliente.class));
+        } else {
+            resultado_select = con.query(
+                    "SELECT 'Empresa' AS TipoCliente\n" +
+                            "FROM Empresa\n" +
+                            "WHERE email = @paramEmail AND senha = @paramSenha\n" +
+                            "UNION\n" +
+                            "SELECT 'Empregado' AS TipoCliente\n" +
+                            "FROM Usuario\n" +
+                            "WHERE email = @paramEmail AND senha = @paramSenha;",
+                    new Object[]{cliente.getEmail(), cliente.getSenha()},
+                    new BeanPropertyRowMapper<>(Cliente.class));
+        }
 
 
             if (resultado_select.size() > 0){
@@ -46,16 +71,34 @@ public class ConexaoBancoDados {
         }
 
     public Map<String, Object> buscar_empresa_e_unidade(Cliente cliente) {
-        Conexao conexao = new Conexao();
+        boolean usarMySQL = true;
+
+        Conexao conexao;
+        if (usarMySQL) {
+            conexao = new Conexao(true);
+        } else {
+            conexao = new Conexao(false);
+        }
+
         JdbcTemplate con = conexao.getConexaoDoBanco();
 
         try {
-            List<Map<String, Object>> resultados = con.queryForList(
-                    "SELECT unidade.idUnidade, empresa.idEmpresa FROM empresa " +
-                            "JOIN endereco ON fk_endereco = idendereco " +
-                            "JOIN Unidade ON unidade.fkEndereco = idendereco " +
-                            "WHERE empresa.email = ? AND empresa.senha = ?",
-                    cliente.getEmail(), cliente.getSenha());
+            List<Map<String, Object>> resultados;
+            if (usarMySQL) {
+                resultados = con.queryForList(
+                        "SELECT unidade.idUnidade, empresa.idEmpresa FROM empresa " +
+                                "JOIN endereco ON fk_endereco = idendereco " +
+                                "JOIN Unidade ON unidade.fkEndereco = idendereco " +
+                                "WHERE empresa.email = ? AND empresa.senha = ?",
+                        cliente.getEmail(), cliente.getSenha());
+            } else {
+                resultados = con.queryForList(
+                        "SELECT unidade.idUnidade, empresa.idEmpresa FROM Empresa " +
+                                "JOIN Endereco ON fk_endereco = idendereco " +
+                                "JOIN Unidade ON unidade.fkEndereco = idendereco " +
+                                "WHERE empresa.email = ? AND empresa.senha = ?",
+                        cliente.getEmail(), cliente.getSenha());
+            }
 
             if (resultados.isEmpty()) {
                 return null;
@@ -70,14 +113,23 @@ public class ConexaoBancoDados {
         }
     }
 
-    public void inserir_dados_maquina(String nome_maquina ,String ipMaquina, String so , Boolean status, Integer fk_empresa , Integer fKUnidade){
-            Conexao conexao = new Conexao();
-            JdbcTemplate con = conexao.getConexaoDoBanco();
-            con.update("INSERT INTO Maquina (nomeMaquina, ipmaquina, sistemaOperacional, statusMaquina,FkEmpresa , fKUnidade ) VALUES (?, ?, ?, ?, ? , ?)", nome_maquina, ipMaquina, so, status, fk_empresa , fKUnidade);
-        }
 
-        public void inserir_tipo_componente(){
-            Conexao conexao = new Conexao();
+    public void inserir_dados_maquina(String nome_maquina, String ipMaquina, String so, Boolean status, Integer fk_empresa, Integer fKUnidade) {
+        Conexao conexao = new Conexao(true);
+        JdbcTemplate con = conexao.getConexaoDoBanco();
+
+        try {
+            con.update("INSERT INTO Maquina (nomeMaquina, ipmaquina, sistemaOperacional, statusMaquina, FkEmpresa, fKUnidade ) VALUES (?, ?, ?, ?, ? , ?)",
+                    nome_maquina,    ipMaquina, so, status, fk_empresa, fKUnidade);
+            con.getDataSource().getConnection().commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void inserir_tipo_componente(){
+            Conexao conexao = new Conexao(true);
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
             // memoria
@@ -104,7 +156,7 @@ public class ConexaoBancoDados {
         }
 
         public void InserirTabelaConfiguracoes(){
-            Conexao conexao = new Conexao();
+            Conexao conexao = new Conexao(true);
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
             // Memória
@@ -141,11 +193,11 @@ public class ConexaoBancoDados {
         }
 
     public Integer obterIdMaquina(String nomeMaquina) {
-        Conexao conexao = new Conexao();
+        Conexao conexao = new Conexao(true);
         JdbcTemplate con = conexao.getConexaoDoBanco();
 
         try {
-            String sql = "SELECT idMaquina FROM maquina WHERE nomeMaquina = '?'";
+            String sql = "SELECT idMaquina FROM maquina WHERE nomeMaquina = ?";
 
             return con.queryForObject(sql, Integer.class, nomeMaquina);
         } catch (Exception e) {
@@ -154,7 +206,7 @@ public class ConexaoBancoDados {
         }
     }
     public List<Integer> buscar_fk_maquina() {
-        Conexao conexao = new Conexao();
+        Conexao conexao = new Conexao(true);
         JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
 
         String sql = "SELECT idMaquina FROM maquina";
@@ -163,7 +215,7 @@ public class ConexaoBancoDados {
         return idMaquinas;
     }
         public void atualizarFkUnidadeMedida(Integer fk_maquina){
-            Conexao conexao = new Conexao();
+            Conexao conexao = new Conexao(true);
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
             String sql = "UPDATE UnidadeMedida SET fkMaquina = ? WHERE idParametros = 1;\n";
@@ -172,7 +224,7 @@ public class ConexaoBancoDados {
         }
 
         public void inserirMedicoes(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador){
-            Conexao conexao = new Conexao();
+            Conexao conexao = new Conexao(true);
             JdbcTemplate con = conexao.getConexaoDoBanco();
             Date dataHoraAtual = new Date();
 
@@ -199,7 +251,7 @@ public class ConexaoBancoDados {
         }
 
     public String AlertaMemoria(int idMaquina) {
-        Conexao conexao = new Conexao();
+        Conexao conexao = new Conexao(true);
         JdbcTemplate con = conexao.getConexaoDoBanco();
 
         String sql = "SELECT MA.mensagemAlerta " +
@@ -207,53 +259,49 @@ public class ConexaoBancoDados {
                 "JOIN UnidadeMedida UM ON MA.fkUnidadeMedida = UM.idParametros " +
                 "JOIN Maquina M ON UM.fkMaquina = M.idMaquina " +
                 "WHERE M.idMaquina = ? " +
-                "ORDER BY MA.dhHoraAlerta DESC " +
-                "LIMIT 1";
+                "ORDER BY MA.dhHoraAlerta DESC";
 
-        return con.query(sql, new Object[]{idMaquina}, resultSet -> {
-            if (resultSet.next()) {
-                return resultSet.getString("mensagemAlerta");
-            }
+        List<String> mensagensAlerta = con.queryForList(sql, String.class, idMaquina);
 
-            return null;
-        });
+        if (!mensagensAlerta.isEmpty()) {
+            return mensagensAlerta.get(0);
+        }
+
+        return null;
     }
 
 
 
+
     public void Alertas(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador) {
-        Conexao conexao = new Conexao();
+        Conexao conexao = new Conexao(true);
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Date dataHoraAtual = new Date();
         Double percentualDeUso = (memoria.getMemoria_em_uso() / memoria.getMemoria_total()) * 100.0;
 
 
 
-        double limiteAlerta = 80.0;
-        double limiteCritico = 90.0;
+        Double limiteAlerta = 80.0;
+        Double limiteCritico = 90.0;
         String tipoComponenteM = "Memória";
         String tipoComponenteD = "Disco";
         String tipoComponenteR = "Rede";
         String tipoComponenteP = "Processador";
-        String mensagemAlertaProcessador = "\"Atenção! O percentual de uso do processador está acima do normal. Recomenda-se verificar a causa desse aumento.\"\n";
-        String mensagemAlertaCriticoProcessador = "\"Estado Crítico! O percentual de uso do processador atingiu um nível perigoso. Ações imediatas são necessárias para evitar problemas de desempenho.\"\n";
+        String mensagemAlertaProcessador = "Atenção! O percentual de uso do processador está acima do normal. Recomenda-se verificar a causa desse aumento.";
+        String mensagemAlertaCriticoProcessador = "Estado Crítico! O percentual de uso do processador atingiu um nível perigoso. Ações imediatas são necessárias para evitar problemas de desempenho";
         String mensagemAlertaRede = "Baixa atividade na rede.";
         String mensagemCriticoRede = "Alta atividade na rede.";
-        String mensagemMemoriaCritico = "Estado crítico! O percentual de uso da memória está acima de " + limiteCritico + "%";
-        String mensagemMemoriaAlerta = "Estado de alerta! O percentual de uso da memória está acima de " + limiteAlerta + "%";
+        String mensagemMemoriaCritico = "Estado crítico! O percentual de uso da memória ram está acima de " + limiteCritico + "%";
+        String mensagemMemoriaAlerta = "Estado de alerta! O percentual de uso da memória ram está acima de " + limiteAlerta + "%";
         String mensagemDiscoAlerta = "Atenção! O espaço no disco está quase atingindo seu limite. Recomenda-se liberar espaço para evitar problemas de armazenamento.";
         String mensagemDiscoCritico = "Estado Crítico! O espaço no disco atingiu um nível perigoso. Ações imediatas são necessárias para liberar espaço e garantir o funcionamento adequado do sistema.";
-        double minimoMemoria = 0.0;
-        double maximoMemoria = 100.0;
+        Double minimoMemoria = 0.0;
+        Double maximoMemoria = 100.0;
 
         // rede
 
-
-
-
-        // Calcula a média entre bytes recebidos e bytes enviados
-        double limiteInferiorRede = 1;
-        double limiteSuperiorRede = 1000;
+        Integer limiteInferiorRede = 1;
+        Integer limiteSuperiorRede = 1000;
         Double mediaDeRede = (rede.getQuantidade_bytes_enviados() + rede.getQuantidade_bytes_enviados()) / 2.0;
 
         // alerta de memória
@@ -269,6 +317,7 @@ public class ConexaoBancoDados {
                     "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaAlerta, minimoMemoria, dataHoraAtual);
         }
 
+        // alerta de disco
         if(disco.getPorcentagem_de_Uso_do_Disco() >=limiteCritico){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
@@ -281,6 +330,8 @@ public class ConexaoBancoDados {
                     "VALUES " +
                     "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual);
         }
+
+        // alerta de rede
         if(mediaDeRede < limiteInferiorRede){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
@@ -294,7 +345,7 @@ public class ConexaoBancoDados {
                     "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual);
         }
 
-        processador.setPercentual_uso_do_processador(85.0);
+        // alerta de processador
         if(processador.getPercentual_uso_do_processador() >= limiteAlerta){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +

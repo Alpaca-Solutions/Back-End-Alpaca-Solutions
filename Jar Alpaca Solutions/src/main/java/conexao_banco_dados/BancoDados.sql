@@ -1,3 +1,4 @@
+-- My Sql
 create database AlpacaDB;
 use AlpacaDB;
 
@@ -202,3 +203,155 @@ SELECT MA.idMetricasAlertas, MA.TipoComponente, MA.maximo, MA.mensagemAlerta, MA
                 select * from MetricasAlertas;
                 ORDER BY MA.dhHoraAlerta DESC
                 LIMIT 1;
+
+-- Sql Server
+
+USE master;
+GO
+
+-- Criar o banco de dados
+CREATE DATABASE AlpacaDB;
+GO
+
+-- Usar o banco de dados
+USE AlpacaDB;
+GO
+
+-- Dropar o banco de dados (caso necessário)
+-- DROP DATABASE AlpacaDB;
+-- GO
+
+-- Criar tabela Endereco
+CREATE TABLE Endereco (
+    idEndereco INT PRIMARY KEY IDENTITY(1,1),
+    cep VARCHAR(8),
+    rua VARCHAR(50),
+    numero VARCHAR(50),
+    bairro VARCHAR(50),
+    cidade VARCHAR(50),
+    estado VARCHAR(50),
+    ativo BIT
+);
+GO
+
+-- Criar tabela Empresa
+CREATE TABLE Empresa (
+    idEmpresa INT PRIMARY KEY IDENTITY(1,1),
+    nomeFantasia VARCHAR(45),
+    razaoSocial VARCHAR(45),
+    email VARCHAR(50),
+    senha VARCHAR(50),
+    cnpj VARCHAR(14),
+    ativo BIT,
+    fk_endereco INT,
+    CONSTRAINT fk_endereco FOREIGN KEY (fk_endereco) REFERENCES Endereco(idEndereco)
+);
+GO
+
+-- Criar tabela Telefone
+CREATE TABLE Telefone (
+    idTelefone INT PRIMARY KEY IDENTITY(1,1),
+    numero CHAR(11),
+    tipo VARCHAR(45),
+    ativo BIT,
+    fkEmpresa INT,
+    CONSTRAINT fkEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
+);
+GO
+
+-- Criar tabela Usuario
+CREATE TABLE Usuario (
+    idUsuario INT PRIMARY KEY IDENTITY(1,1),
+    nome VARCHAR(50),
+    email VARCHAR(50),
+    senha VARCHAR(50),
+    tipoAcesso VARCHAR(20),
+    nivelAcesso VARCHAR(20),
+    ativo BIT,
+    fkEmpresa INT,
+    CONSTRAINT fkEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa)
+);
+GO
+
+-- Criar tabela Unidade
+CREATE TABLE Unidade (
+    idUnidade INT PRIMARY KEY IDENTITY(1,1),
+    nomeInstituicao VARCHAR(45),
+    ativo BIT,
+    fkEndereco INT,
+    CONSTRAINT fkEndereco FOREIGN KEY (fkEndereco) REFERENCES Endereco(idEndereco)
+);
+GO
+
+-- Criar tabela Maquina
+CREATE TABLE Maquina (
+    idMaquina INT PRIMARY KEY IDENTITY(1,1),
+    NomeMaquina VARCHAR(50) NOT NULL,
+    ipMaquina VARCHAR(45),
+    sistemaOperacional VARCHAR(45),
+    statusMaquina BIT,
+    ativo BIT,
+    fkEmpresa INT,
+    fKUnidade INT,
+    CONSTRAINT fkEmpresa FOREIGN KEY (fkEmpresa) REFERENCES Empresa(idEmpresa),
+    CONSTRAINT fKUnidade FOREIGN KEY (fKUnidade) REFERENCES Unidade(idUnidade)
+);
+GO
+
+-- Criar tabela TipoComponente
+CREATE TABLE TipoComponente (
+    idTipoComponente INT PRIMARY KEY IDENTITY(1,1),
+    nomeTipo VARCHAR(60),
+    tipoComponente VARCHAR(60)
+);
+GO
+
+-- Criar tabela UnidadeMedida
+CREATE TABLE UnidadeMedida (
+    idParametros INT PRIMARY KEY IDENTITY(1,1),
+    Tipo CHAR(10),
+    fkMaquina INT,
+    CONSTRAINT fkMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina)
+);
+GO
+
+-- Criar tabela Config
+CREATE TABLE Config (
+    idComponentes INT PRIMARY KEY IDENTITY(1,1),
+    ValorConfiguracao VARCHAR(80),
+    fkMaquina INT,
+    fkTipoComponenteID INT,
+    CONSTRAINT fkMaquina FOREIGN KEY (fkMaquina) REFERENCES Maquina(idMaquina),
+    CONSTRAINT fkTipoComponenteID FOREIGN KEY (fkTipoComponenteID) REFERENCES TipoComponente(idTipoComponente)
+);
+GO
+
+-- Criar tabela Medicoes
+CREATE TABLE Medicoes (
+    idMedicoes INT PRIMARY KEY IDENTITY(1,1),
+    valor DECIMAL(10,2),
+    data_hora_leitura DATETIME,
+    id_computador INT,
+    fkTipoComponenteID INT,
+    fkUnidadeMedidaID INT,
+    CONSTRAINT fkTipoComponenteID FOREIGN KEY (fkTipoComponenteID) REFERENCES TipoComponente(idTipoComponente),
+    CONSTRAINT fkUnidadeMedidaID FOREIGN KEY (fkUnidadeMedidaID) REFERENCES UnidadeMedida(idParametros)
+);
+GO
+
+-- Criar tabela MetricasAlertas
+CREATE TABLE MetricasAlertas (
+    idMetricasAlertas INT PRIMARY KEY IDENTITY(1,1),
+    TipoComponente VARCHAR(45),
+    maximo VARCHAR(45),
+    mensagemAlerta VARCHAR(150),
+    minimo VARCHAR(45),
+    dhHoraAlerta DATETIME,
+    fkUnidadeMedida INT,
+    fkTipoComponente INT,
+    fkConfiguracao INT,
+    CONSTRAINT fkUnidadeMedida FOREIGN KEY (fkUnidadeMedida) REFERENCES UnidadeMedida(idParametros),
+    CONSTRAINT fkTipoComponente FOREIGN KEY (fkTipoComponente) REFERENCES TipoComponente(idTipoComponente),
+    CONSTRAINT fkConfiguracao FOREIGN KEY (fkConfiguracao) REFERENCES Config(idComponentes)
+);
+GO

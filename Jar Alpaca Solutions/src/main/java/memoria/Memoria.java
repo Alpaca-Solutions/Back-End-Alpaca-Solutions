@@ -79,9 +79,9 @@ public class Memoria {
     public String toString() {
 
         return String.format("Dados da Memoria\n" +
-                        "Memoria em Uso: %.2f GB\n" +
-                        "Memoria Disponivel: %.2f GB\n" +
-                        "Total da Memória: %.2f GB\n",
+                        "Memoria Ram em Uso: %.2f GB\n" +
+                        "Memoria Ram Disponivel: %.2f GB\n" +
+                        "Total da Memória Ram: %.2f GB\n",
                 memoria_em_uso, memoria_Disponivel, Memoria_total);
     }
 

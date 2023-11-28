@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Dados {
     public static void main(String[] args) {
         // Inicializa a conexão com o banco de dados
-        Conexao conexao = new Conexao();
+        Conexao conexao = new Conexao(true);
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Scanner leitor = new Scanner(System.in);
         String continuar;
@@ -42,7 +42,7 @@ public class Dados {
         Cliente cliente = new Cliente(email , senha);
 
 
-        ConexaoBancoDados busca_cliente = new ConexaoBancoDados();
+        ConexaoBancoDados busca_cliente = new ConexaoBancoDados(true);
 
         Map<String, Object> resultados = busca_cliente.buscar_empresa_e_unidade(cliente);
 
@@ -139,10 +139,10 @@ public class Dados {
                         statusMaquina = false;
                     }
 
+                    System.out.println("Status da Máquina " + statusMaquina);
                     maquina01.setStatusMaquina(statusMaquina);
                     System.out.println(statusMaquina);
                     System.out.println(maquina01);
-
 
                     // Cpu
 
@@ -159,18 +159,20 @@ public class Dados {
 
 
                     // aqui ele vai fazer a inserção nas 3 tabelas , espero que de certo
-                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados();
+                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados(true);
 
                     Integer fk_maquina = null;
 
 
 
 
-                    if (!insercaoRealizada.get()) {
+                    if (insercaoRealizada.compareAndSet(false, true)) {
                         // Obtenha idUnidade e idEmpresa do seu método ou de onde você os obtém
                         Integer idUnidade = (Integer) resultados.get("idUnidade");
                         Integer idEmpresa = (Integer) resultados.get("idEmpresa");
 
+                        System.out.println("Valor no If");
+                        System.out.println(maquina01.getStatusMaquina());
                         // Inserir dados da máquina
                         insertMaquina.inserir_dados_maquina(
                                 maquina01.getNomeMaquina(),
@@ -180,14 +182,13 @@ public class Dados {
                                 idEmpresa,
                                 idUnidade
                         );
-                        // Inserir tipo de componente
 
+                        // Inserir tipo de componente
                         insertMaquina.inserir_tipo_componente();
 
                         List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
                         fk_maquina = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
                         insertMaquina.atualizarFkUnidadeMedida(fk_maquina);
-                        insercaoRealizada.set(true);
                     }
 
 
