@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Dados {
     public static void main(String[] args) {
         // Inicializa a conexão com o banco de dados
-        Conexao conexao = new Conexao(true);
+        Conexao conexao = new Conexao(false);
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Scanner leitor = new Scanner(System.in);
         String continuar;
@@ -159,11 +159,9 @@ public class Dados {
 
 
                     // aqui ele vai fazer a inserção nas 3 tabelas , espero que de certo
-                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados(true);
+                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados(false);
 
                     Integer fk_maquina = null;
-
-
 
 
                     if (insercaoRealizada.compareAndSet(false, true)) {

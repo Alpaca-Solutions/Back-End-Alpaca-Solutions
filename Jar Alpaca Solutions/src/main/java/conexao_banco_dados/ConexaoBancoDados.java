@@ -21,7 +21,7 @@ public class ConexaoBancoDados extends Conexao{
     }
 
     public Integer Busca_Cliente(Cliente cliente) {
-        boolean usarMySQL = true;
+        boolean usarMySQL = false;
 
         Conexao conexao;
         if (usarMySQL) {
@@ -71,7 +71,7 @@ public class ConexaoBancoDados extends Conexao{
         }
 
     public Map<String, Object> buscar_empresa_e_unidade(Cliente cliente) {
-        boolean usarMySQL = true;
+        boolean usarMySQL = false;
 
         Conexao conexao;
         if (usarMySQL) {
@@ -115,7 +115,7 @@ public class ConexaoBancoDados extends Conexao{
 
 
     public void inserir_dados_maquina(String nome_maquina, String ipMaquina, String so, Boolean status, Integer fk_empresa, Integer fKUnidade) {
-        Conexao conexao = new Conexao(true);
+        Conexao conexao = new Conexao(false);
         JdbcTemplate con = conexao.getConexaoDoBanco();
 
         try {
@@ -129,7 +129,7 @@ public class ConexaoBancoDados extends Conexao{
 
 
     public void inserir_tipo_componente(){
-            Conexao conexao = new Conexao(true);
+            Conexao conexao = new Conexao(false);
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
             // memoria
@@ -156,7 +156,7 @@ public class ConexaoBancoDados extends Conexao{
         }
 
         public void InserirTabelaConfiguracoes(){
-            Conexao conexao = new Conexao(true);
+            Conexao conexao = new Conexao(false);
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
             // Memória
@@ -193,7 +193,7 @@ public class ConexaoBancoDados extends Conexao{
         }
 
     public Integer obterIdMaquina(String nomeMaquina) {
-        Conexao conexao = new Conexao(true);
+        Conexao conexao = new Conexao(false);
         JdbcTemplate con = conexao.getConexaoDoBanco();
 
         try {
@@ -215,7 +215,7 @@ public class ConexaoBancoDados extends Conexao{
         return idMaquinas;
     }
         public void atualizarFkUnidadeMedida(Integer fk_maquina){
-            Conexao conexao = new Conexao(true);
+            Conexao conexao = new Conexao(false);
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
             String sql = "UPDATE UnidadeMedida SET fkMaquina = ? WHERE idParametros = 1;\n";
@@ -251,7 +251,7 @@ public class ConexaoBancoDados extends Conexao{
         }
 
     public String AlertaMemoria(int idMaquina) {
-        Conexao conexao = new Conexao(true);
+        Conexao conexao = new Conexao(false);
         JdbcTemplate con = conexao.getConexaoDoBanco();
 
         String sql = "SELECT MA.mensagemAlerta " +
@@ -274,7 +274,7 @@ public class ConexaoBancoDados extends Conexao{
 
 
     public void Alertas(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador) {
-        Conexao conexao = new Conexao(true);
+        Conexao conexao = new Conexao(false);
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Date dataHoraAtual = new Date();
         Double percentualDeUso = (memoria.getMemoria_em_uso() / memoria.getMemoria_total()) * 100.0;
