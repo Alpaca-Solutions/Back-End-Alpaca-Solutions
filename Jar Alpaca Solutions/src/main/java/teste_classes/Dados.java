@@ -7,6 +7,7 @@ import com.github.britooo.looca.api.group.processador.Processador;
 import com.github.britooo.looca.api.group.sistema.Sistema;
 import conexao_banco_dados.Conexao;
 import conexao_banco_dados.ConexaoBancoDados;
+import conexao_banco_dados.ConexaoNuvem;
 import disco.Disco;
 import maquina.Maquina;
 import mensageria.Alertas;
@@ -22,14 +23,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Dados {
     public static void main(String[] args) {
         // Inicializa a conexão com o banco de dados
-        Conexao conexao = new Conexao(false);
+        Conexao conexao = new Conexao();
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Scanner leitor = new Scanner(System.in);
         String continuar;
         Timer tempo = new Timer();
         Alertas alerta = new Alertas();
-
-
 
         System.out.println("Olá Bem Vindo ao Sistema de Monitoramento Alpaca Solutions");
 
@@ -42,13 +41,23 @@ public class Dados {
         Cliente cliente = new Cliente(email , senha);
 
 
-        ConexaoBancoDados busca_cliente = new ConexaoBancoDados(true);
+        ConexaoBancoDados busca_cliente = new ConexaoBancoDados();
 
-        Map<String, Object> resultados = busca_cliente.buscar_empresa_e_unidade(cliente);
+
+        Integer resultados = busca_cliente.Busca_Cliente(cliente);
 
         Integer resultado_select_cliente = busca_cliente.Busca_Cliente(cliente);
 
+
         if(resultado_select_cliente == 200) {
+            System.out.println("  ___   _                              _____         _         _    _                    \n" +
+                    " / _ \\ | |                            /  ___|       | |       | |  (_)                   \n" +
+                    "/ /_\\ \\| | _ __    __ _   ___   __ _  \\ `--.   ___  | | _   _ | |_  _   ___   _ __   ___ \n" +
+                    "|  _  || || '_ \\  / _` | / __| / _` |  `--. \\ / _ \\ | || | | || __|| | / _ \\ | '_ \\ / __|\n" +
+                    "| | | || || |_) || (_| || (__ | (_| | /\\__/ /| (_) || || |_| || |_ | || (_) || | | |\\__ \\\n" +
+                    "\\_| |_/|_|| .__/  \\__,_| \\___| \\__,_| \\____/  \\___/ |_| \\__,_| \\__||_| \\___/ |_| |_||___/\n" +
+                    "          | |                                                                            \n" +
+                    "          |_|                                                                            ");
 
             TimerTask task = new TimerTask() {
                 AtomicBoolean insercaoRealizada = new AtomicBoolean(false);
@@ -57,6 +66,7 @@ public class Dados {
                 @Override
                 public void run() {
                     Looca looca = new Looca();
+
 
 
                     // Funcão para capturar dados do processador e mandar para as classes
@@ -121,7 +131,6 @@ public class Dados {
                     }
 
 
-
                     // maquina ativa ou não
 
                     Boolean statusMaquina;
@@ -159,17 +168,23 @@ public class Dados {
 
 
                     // aqui ele vai fazer a inserção nas 3 tabelas , espero que de certo
-                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados(false);
+                    ConexaoBancoDados insertMaquina = new ConexaoBancoDados();
 
                     Integer fk_maquina = null;
 
+                    Integer fk_maquinaNuvem = null;
+
 
                     if (insercaoRealizada.compareAndSet(false, true)) {
-                        // Obtenha idUnidade e idEmpresa do seu método ou de onde você os obtém
-                        Integer idUnidade = (Integer) resultados.get("idUnidade");
-                        Integer idEmpresa = (Integer) resultados.get("idEmpresa");
 
-                        System.out.println("Valor no If");
+                        Map<String, Object> resultadoLocal = insertMaquina.buscar_empresa_e_unidade_local(cliente);
+                        Integer idUnidadeLocal = resultadoLocal != null ? (Integer) resultadoLocal.get("idUnidade") : null;
+                        Integer idEmpresaLocal = resultadoLocal != null ? (Integer) resultadoLocal.get("idEmpresa") : null;
+
+                        Map<String, Object> resultadoNuvem = insertMaquina.buscar_empresa_e_unidade_nuvem(cliente);
+                        Integer idUnidadeNuvem = resultadoNuvem != null ? (Integer) resultadoNuvem.get("idUnidade") : null;
+                        Integer idEmpresaNuvem = resultadoNuvem != null ? (Integer) resultadoNuvem.get("idEmpresa") : null;
+
                         System.out.println(maquina01.getStatusMaquina());
                         // Inserir dados da máquina
                         insertMaquina.inserir_dados_maquina(
@@ -177,27 +192,49 @@ public class Dados {
                                 maquina01.getIpMaquina(),
                                 maquina01.getSistema_Operacional(),
                                 maquina01.getStatusMaquina(),
-                                idEmpresa,
-                                idUnidade
+                                idUnidadeLocal,
+                                idEmpresaLocal
+                        );
+                        Integer valorBancoNuvem;
+                        if(maquina01.getStatusMaquina().equals(true)){
+                            valorBancoNuvem = 1;
+                        }
+                        else{
+                            valorBancoNuvem = 0;
+                        }
+
+                        insertMaquina.inserir_dados_maquinaNuvem(
+                                maquina01.getNomeMaquina(),
+                                maquina01.getIpMaquina(),
+                                maquina01.getSistema_Operacional(),
+                                valorBancoNuvem,
+                                idEmpresaNuvem,
+                                idUnidadeNuvem
                         );
 
                         // Inserir tipo de componente
                         insertMaquina.inserir_tipo_componente();
+                        insertMaquina.inserir_tipo_componenteNuvem();
 
                         List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
                         fk_maquina = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
                         insertMaquina.atualizarFkUnidadeMedida(fk_maquina);
+
+                        List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem();
+                        fk_maquinaNuvem = !idsMaquinaNuvem.isEmpty() ? idsMaquinaNuvem.get(0) : 0;
+                        insertMaquina.atualizarFkUnidadeMedidaNuvem(fk_maquinaNuvem);
+
                     }
 
-
-
-
                     List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
+                    List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem();
                     Integer fk = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
+                    Integer fkNuvem = !idsMaquinaNuvem.isEmpty() ? idsMaquinaNuvem.get(0) : 0;
                     insertMaquina.inserirMedicoes(dados_memoria, rede, processador, disco01, fk);
-
+                    insertMaquina.inserirMedicoesNuvem(dados_memoria, rede, processador, disco01, fk);
                     insertMaquina.InserirTabelaConfiguracoes();
-                    insertMaquina.Alertas(dados_memoria ,disco01 ,rede,processador, fk_maquina);
+                    insertMaquina.InserirTabelaConfiguracoesNuvem(fkNuvem);
+//                    insertMaquina.Alertas(dados_memoria ,disco01 ,rede,processador, fk_maquina);
                     try {
                         alerta.Alerta(insertMaquina.AlertaMemoria(fk));
                     } catch (IOException | InterruptedException e) {
@@ -208,7 +245,7 @@ public class Dados {
             };
 
             long delay_de_tempo = 0;
-            long tempo_carregar = 3000;
+            long tempo_carregar = 10000;
 
             tempo.scheduleAtFixedRate(task, delay_de_tempo, tempo_carregar);
 
