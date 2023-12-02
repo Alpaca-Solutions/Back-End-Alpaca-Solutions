@@ -10,10 +10,7 @@ import processador.Processador;
 import rede.Rede;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 // acabei o jar aaaaaaaaaaaa
 
@@ -58,7 +55,7 @@ public class ConexaoBancoDados extends Conexao{
                 new BeanPropertyRowMapper<>(Cliente.class)
         );
 
-        if (resultado_select_local.size() > 0 || resultado_select_nuvem.size() > 0){
+        if (resultado_select_local.size() > 0 && resultado_select_nuvem.size() > 0){
                 resultado = 200;
             }
             else{
@@ -513,26 +510,35 @@ public class ConexaoBancoDados extends Conexao{
 
         return valoresFk;
     }
-    public List<Integer> buscar_fk_maquina() {
+    public List<Integer> buscar_fk_maquina(String hostname) {
         Conexao conexao = new Conexao();
         JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
-        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
-        JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
 
-        String sql = "SELECT idMaquina FROM maquina";
-        List<Integer> idMaquinas = jdbcTemplate.queryForList(sql, Integer.class);
+        String sql = "SELECT idMaquina FROM maquina WHERE hostname = ? LIMIT 1;";
+        Integer idMaquina = jdbcTemplate.queryForObject(sql, Integer.class, hostname);
+
+        List<Integer> idMaquinas = new ArrayList<>();
+        if (idMaquina != null) {
+            idMaquinas.add(idMaquina);
+        }
+
         return idMaquinas;
     }
 
-    public List<Integer> buscar_fk_maquinaNuvem(Integer fk_maquinaNuvem){
-        Conexao conexao = new Conexao();
-        JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
-        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
-        JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
 
-        String sql = "SELECT idMaquina FROM maquina";
-        List<Integer> idMaquinasbancoNuvem = conNuvem.queryForList(sql , Integer.class);
-        return idMaquinasbancoNuvem;
+    public List<Integer> buscar_fk_maquinaNuvem(String hostname){
+        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
+        JdbcTemplate jdbcTemplate = conexaoNuvem.getConexaoDoBanco();
+
+        String sql = "SELECT Top 1 idMaquina FROM maquina WHERE hostname = ?;";
+        Integer idMaquina = jdbcTemplate.queryForObject(sql, Integer.class, hostname);
+
+        List<Integer> idMaquinas = new ArrayList<>();
+        if (idMaquina != null) {
+            idMaquinas.add(idMaquina);
+        }
+
+        return idMaquinas;
     }
 
     public List<Integer> buscarFkUnidade(Integer fkMaquina){
