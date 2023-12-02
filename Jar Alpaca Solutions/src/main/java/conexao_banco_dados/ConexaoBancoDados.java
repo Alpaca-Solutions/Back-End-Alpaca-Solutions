@@ -746,6 +746,21 @@ public class ConexaoBancoDados extends Conexao{
         return configuracoes;
     }
 
+        //LOG
+private static final String LOG_FILE_PATH = "logs_alerta.txt";
+    //CRIANDO ARQUIVO TXT
+    public static void log(String tipoComponente, Double percentualDeUso, String mensagem) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(LOG_FILE_PATH, true))) {
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+            //FORMATANDO DATA
+            String mensagemLOG = String.format("[%s] Tipo: %s, Percentual de Uso: %.2f%% - %s", timeStamp, tipoComponente, percentualDeUso, mensagem);
+            //FORMATANDO MENSAGEM DO LOG
+            writer.println(mensagemLOG);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
 
@@ -803,6 +818,8 @@ public class ConexaoBancoDados extends Conexao{
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
+                //CHAMANDO LOG
+            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
         } else if (percentualDeUso >= limiteAlerta) {
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
@@ -816,6 +833,8 @@ public class ConexaoBancoDados extends Conexao{
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
+                //CHAMANDO LOG
+            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
         }
         // alerta de disco
         if(disco.getPorcentagem_de_Uso_do_Disco() >=limiteCritico){
@@ -848,6 +867,8 @@ public class ConexaoBancoDados extends Conexao{
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual, fkBytesEnviados, fkConfigBytesEnviados);
+                //CHAMANDO LOG
+            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
         }
         else if(mediaDeRede > limiteSuperiorRede){
             con.update("INSERT INTO MetricasAlertas " +
@@ -858,6 +879,8 @@ public class ConexaoBancoDados extends Conexao{
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual, fkUnidade, fkBytesEnviados,fkConfigBytesEnviados);
+              //CHAMANDO LOG
+            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
         }
 
         // alerta de processador
