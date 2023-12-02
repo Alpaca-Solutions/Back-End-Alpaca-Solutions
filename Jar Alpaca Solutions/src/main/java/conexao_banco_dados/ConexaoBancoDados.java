@@ -4,18 +4,18 @@ import cliente.Cliente;
 import disco.Disco;
 import memoria.Memoria;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import processador.Processador;
 import rede.Rede;
 
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+// acabei o jar aaaaaaaaaaaa
 
 public class ConexaoBancoDados extends Conexao{
         List<Cliente> clienteList;
@@ -204,46 +204,51 @@ public class ConexaoBancoDados extends Conexao{
 
     }
 
-        public void InserirTabelaConfiguracoes(){
+        public void InserirTabelaConfiguracoes(Integer fkMaquina,  Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
+                                               Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
+                                               Integer fkBytesRecebidos , Integer fkBytesEnviados){
             Conexao conexao = new Conexao();
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
 
             // Memória
+            // Memória
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoMemoriaUsada", 1, 1);
+                    "ConfiguracaoMemoriaUsada", fkMaquina, FkMemoriaUsada);
 
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoMemoriaEmUso", 1, 2);
+                    "ConfiguracaoMemoriaEmUso", fkMaquina, fkmemoriaUso);
 
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoMemoriaDisponivel", 1, 3);
+                    "ConfiguracaoMemoriaDisponivel", fkMaquina, fkMemoriaDipsonivel);
 
 // Disco
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoPercentualUsoDisco", 1, 4);
+                    "ConfiguracaoPercentualUsoDisco", fkMaquina, fkpercetDisco);
 
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoTamanhoDisco", 1, 5);
+                    "ConfiguracaoTamanhoDisco", fkMaquina, fktamanhoDisco);
 
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoTamanhoDisponivel", 1, 6);
+                    "ConfiguracaoTamanhoDisponivel", fkMaquina, fkTamanhoDisponivelDisco);
 
-                // Processador
+            // Processador
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoPercentualUsoProcessador", 1, 7);
+                    "ConfiguracaoPercentualUsoProcessador", fkMaquina, fkpercentualProcessador);
 
-             // Rede
+            // Rede
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoBytesRecebidos", 1, 8);
+                    "ConfiguracaoBytesRecebidos", fkMaquina, fkBytesRecebidos);
 
             con.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoBytesEnviados", 1, 9);
+                    "ConfiguracaoBytesEnviados", fkMaquina, fkBytesEnviados);
 
 
         }
 
-        public void InserirTabelaConfiguracoesNuvem(Integer fkMaquina){
+        public void InserirTabelaConfiguracoesNuvem(Integer fkMaquina,  Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
+                                                    Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
+                                                    Integer fkBytesRecebidos , Integer fkBytesEnviados){
             ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
             JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
 
@@ -253,34 +258,34 @@ public class ConexaoBancoDados extends Conexao{
 
             // Memória
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoMemoriaUsada", fkMaquina, 1);
+                    "ConfiguracaoMemoriaUsada", fkMaquina, FkMemoriaUsada);
 
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoMemoriaEmUso", fkMaquina, 2);
+                    "ConfiguracaoMemoriaEmUso", fkMaquina, fkmemoriaUso);
 
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoMemoriaDisponivel", fkMaquina, 3);
+                    "ConfiguracaoMemoriaDisponivel", fkMaquina, fkMemoriaDipsonivel);
 
 // Disco
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoPercentualUsoDisco", fkMaquina, 4);
+                    "ConfiguracaoPercentualUsoDisco", fkMaquina, fkpercetDisco);
 
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoTamanhoDisco", fkMaquina, 5);
+                    "ConfiguracaoTamanhoDisco", fkMaquina, fktamanhoDisco);
 
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoTamanhoDisponivel", fkMaquina, 6);
+                    "ConfiguracaoTamanhoDisponivel", fkMaquina, fkTamanhoDisponivelDisco);
 
             // Processador
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoPercentualUsoProcessador", fkMaquina, 7);
+                    "ConfiguracaoPercentualUsoProcessador", fkMaquina, fkpercentualProcessador);
 
             // Rede
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoBytesRecebidos", fkMaquina, 8);
+                    "ConfiguracaoBytesRecebidos", fkMaquina, fkBytesRecebidos);
 
             conNuvem.update("INSERT INTO Config (ValorConfiguracao, fkMaquina, fkTipoComponenteID) VALUES (?, ?, ?)",
-                    "ConfiguracaoBytesEnviados", fkMaquina, 9);
+                    "ConfiguracaoBytesEnviados", fkMaquina, fkBytesEnviados);
         }
 
     public Integer obterIdMaquina(String nomeMaquina) {
@@ -313,6 +318,201 @@ public class ConexaoBancoDados extends Conexao{
         }
     }
 
+    public Map<String, Integer> obterFksTipoComponenteNuvem(){
+
+        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
+        JdbcTemplate con = conexaoNuvem.getConexaoDoBanco();
+        Map<String, Integer> valoresFk = new HashMap<>();
+
+        // Select específico para 'Percentual de uso do Disco'
+        List<Map<String, Object>> resultPercentualDisco = con.queryForList(
+                "SELECT TOP 1 idTipoComponente, nomeTipo\n" +
+                        "FROM TipoComponente\n" +
+                        "WHERE nomeTipo = 'Percentual de uso do Disco';"
+        );
+
+        // Select geral para todos os tipos
+        List<Map<String, Object>> results = con.queryForList(
+                " WITH CTE AS (\n" +
+                        "                SELECT\n" +
+                        "                idTipoComponente,\n" +
+                        "                nomeTipo,\n" +
+                        "                ROW_NUMBER() OVER (PARTITION BY nomeTipo ORDER BY idTipoComponente) AS row_num\n" +
+                        "                FROM TipoComponente\n" +
+                        "                WHERE nomeTipo IN ('Memoria Usada', 'Memoria em Uso', 'Memoria Disponível', 'Percentual de uso do Disco', 'Tamanho do Disco', 'Tamanho Disponível', 'Percentual de Uso do Processador', 'Bytes Recebidos', 'Bytes Enviados')\n" +
+                        "        )\n" +
+                        "        SELECT idTipoComponente, nomeTipo\n" +
+                        "        FROM CTE\n" +
+                        "        WHERE row_num = 1;");
+
+        if (!resultPercentualDisco.isEmpty()) {
+            // Se houver resultado para 'Percentual de uso do Disco', imprima as informações
+            Map<String, Object> resultado = resultPercentualDisco.get(0);
+            int idTipoComponentePercentualDisco = (int) resultado.get("idTipoComponente");
+            String nomeTipoPercentualDisco = (String) resultado.get("nomeTipo");
+            valoresFk.put("fkPercentualDisco", idTipoComponentePercentualDisco);
+
+        } else {
+            System.out.println("Nenhum resultado encontrado para 'Percentual de uso do Disco'.");
+        }
+
+        if (!results.isEmpty()) {
+            Integer FkMemoriaUsada = null, fkMemoriaEmUso = null, fkMemoriaDisponivel = null, fkPercentualDisco = null, fkTamanhoDisco = null, fkTamanhoDisponivelDisco = null, fkPercentualProcessador = null, fkBytesRecebidos = null, fkBytesEnviados = null;
+
+            // Se houver resultados para todos os tipos, processe-os
+            for (Map<String, Object> coluna : results) {
+                String nomeTipo = (String) coluna.get("nomeTipo");
+                int idTipoComponente = (int) coluna.get("idTipoComponente");
+
+
+                // os valores às variáveis correspondentes
+                switch (nomeTipo) {
+                    case "Memoria Usada":
+                        FkMemoriaUsada = idTipoComponente;
+                        break;
+                    case "Memoria em Uso":
+                        fkMemoriaEmUso = idTipoComponente;
+                        break;
+                    case "Memoria Disponível":
+                        fkMemoriaDisponivel = idTipoComponente;
+                        break;
+                    case "Percentual de uso do Disco":
+                        fkPercentualDisco = idTipoComponente;
+                        break;
+                    case "Tamanho do Disco":
+                        fkTamanhoDisco = idTipoComponente;
+                        break;
+                    case "Tamanho Disponível":
+                        fkTamanhoDisponivelDisco = idTipoComponente;
+                        break;
+                    case "Percentual de Uso do Processador":
+                        fkPercentualProcessador = idTipoComponente;
+                        break;
+                    case "Bytes Recebidos":
+                        fkBytesRecebidos = idTipoComponente;
+                        break;
+                    case "Bytes Enviados":
+                        fkBytesEnviados = idTipoComponente;
+                        break;
+                    default:
+                        System.out.println("Tipo desconhecido: " + nomeTipo);
+                        break;
+                }
+            }
+
+            valoresFk.put("FkMemoriaUsada", FkMemoriaUsada);
+            valoresFk.put("fkMemoriaEmUso", fkMemoriaEmUso);
+            valoresFk.put("fkMemoriaDisponivel", fkMemoriaDisponivel);
+            valoresFk.put("fkTamanhoDisco", fkTamanhoDisco);
+            valoresFk.put("fkTamanhoDisponivelDisco", fkTamanhoDisponivelDisco);
+            valoresFk.put("fkPercentualProcessador", fkPercentualProcessador);
+            valoresFk.put("fkBytesRecebidos", fkBytesRecebidos);
+            valoresFk.put("fkBytesEnviados", fkBytesEnviados);
+
+
+        } else {
+            System.out.println("Nenhum resultado encontrado para todos os tipos.");
+        }
+
+        return valoresFk;
+
+
+
+    }
+    public Map<String, Integer> obterFksTipoComponente() {
+        Conexao conexao = new Conexao();
+        JdbcTemplate con = conexao.getConexaoDoBanco();
+        Map<String, Integer> valoresFk = new HashMap<>();
+
+        // Select específico para 'Percentual de uso do Disco'
+        List<Map<String, Object>> resultPercentualDisco = con.queryForList(
+                "SELECT idTipoComponente, nomeTipo \n" +
+                        "                        FROM TipoComponente \n" +
+                        "                        WHERE nomeTipo = 'Percentual de uso do Disco' limit 1;"
+        );
+
+        // Select geral para todos os tipos
+        List<Map<String, Object>> results = con.queryForList(
+                " SELECT idTipoComponente, nomeTipo\n" +
+                        "FROM TipoComponente\n" +
+                        "WHERE (nomeTipo, idTipoComponente) IN (\n" +
+                        "    SELECT nomeTipo, MIN(idTipoComponente) AS idTipoComponente\n" +
+                        "    FROM TipoComponente\n" +
+                        "    WHERE nomeTipo IN ('Memoria Usada', 'Memoria em Uso', 'Memoria Disponível', 'Percentual de uso do Disco', 'Tamanho do Disco', 'Tamanho Disponível', 'Percentual de Uso do Processador', 'Bytes Recebidos', 'Bytes Enviados')\n" +
+                        "    GROUP BY nomeTipo\n" +
+                        ");");
+
+        if (!resultPercentualDisco.isEmpty()) {
+            // Se houver resultado para 'Percentual de uso do Disco', imprima as informações
+            Map<String, Object> resultado = resultPercentualDisco.get(0);
+            int idTipoComponentePercentualDisco = (int) resultado.get("idTipoComponente");
+            String nomeTipoPercentualDisco = (String) resultado.get("nomeTipo");
+            valoresFk.put("fkPercentualDisco", idTipoComponentePercentualDisco);
+
+        } else {
+            System.out.println("Nenhum resultado encontrado para 'Percentual de uso do Disco'.");
+        }
+
+        if (!results.isEmpty()) {
+            Integer FkMemoriaUsada = null, fkMemoriaEmUso = null, fkMemoriaDisponivel = null, fkPercentualDisco = null, fkTamanhoDisco = null, fkTamanhoDisponivelDisco = null, fkPercentualProcessador = null, fkBytesRecebidos = null, fkBytesEnviados = null;
+
+            // Se houver resultados para todos os tipos, processe-os
+            for (Map<String, Object> coluna : results) {
+                String nomeTipo = (String) coluna.get("nomeTipo");
+                int idTipoComponente = (int) coluna.get("idTipoComponente");
+
+
+                // os valores às variáveis correspondentes
+                switch (nomeTipo) {
+                    case "Memoria Usada":
+                        FkMemoriaUsada = idTipoComponente;
+                        break;
+                    case "Memoria em Uso":
+                        fkMemoriaEmUso = idTipoComponente;
+                        break;
+                    case "Memoria Disponível":
+                        fkMemoriaDisponivel = idTipoComponente;
+                        break;
+                    case "Percentual de uso do Disco":
+                        fkPercentualDisco = idTipoComponente;
+                        break;
+                    case "Tamanho do Disco":
+                        fkTamanhoDisco = idTipoComponente;
+                        break;
+                    case "Tamanho Disponível":
+                        fkTamanhoDisponivelDisco = idTipoComponente;
+                        break;
+                    case "Percentual de Uso do Processador":
+                        fkPercentualProcessador = idTipoComponente;
+                        break;
+                    case "Bytes Recebidos":
+                        fkBytesRecebidos = idTipoComponente;
+                        break;
+                    case "Bytes Enviados":
+                        fkBytesEnviados = idTipoComponente;
+                        break;
+                    default:
+                        System.out.println("Tipo desconhecido: " + nomeTipo);
+                        break;
+                }
+            }
+
+            valoresFk.put("FkMemoriaUsada", FkMemoriaUsada);
+            valoresFk.put("fkMemoriaEmUso", fkMemoriaEmUso);
+            valoresFk.put("fkMemoriaDisponivel", fkMemoriaDisponivel);
+            valoresFk.put("fkTamanhoDisco", fkTamanhoDisco);
+            valoresFk.put("fkTamanhoDisponivelDisco", fkTamanhoDisponivelDisco);
+            valoresFk.put("fkPercentualProcessador", fkPercentualProcessador);
+            valoresFk.put("fkBytesRecebidos", fkBytesRecebidos);
+            valoresFk.put("fkBytesEnviados", fkBytesEnviados);
+
+
+        } else {
+            System.out.println("Nenhum resultado encontrado para todos os tipos.");
+        }
+
+        return valoresFk;
+    }
     public List<Integer> buscar_fk_maquina() {
         Conexao conexao = new Conexao();
         JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
@@ -324,7 +524,7 @@ public class ConexaoBancoDados extends Conexao{
         return idMaquinas;
     }
 
-    public List<Integer> buscar_fk_maquinaNuvem(){
+    public List<Integer> buscar_fk_maquinaNuvem(Integer fk_maquinaNuvem){
         Conexao conexao = new Conexao();
         JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
         ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
@@ -335,7 +535,38 @@ public class ConexaoBancoDados extends Conexao{
         return idMaquinasbancoNuvem;
     }
 
-        public void atualizarFkUnidadeMedida(Integer fk_maquina){
+    public List<Integer> buscarFkUnidade(Integer fkMaquina){
+        Conexao conexao = new Conexao();
+        JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
+
+        String sql = "SELECT m.idmaquina\n" +
+                "FROM UnidadeMedida um\n" +
+                "JOIN Maquina m ON um.fkMaquina = m.idMaquina\n" +
+                "WHERE m.idmaquina = " + fkMaquina;
+
+        List<Integer> idMaquinas = jdbcTemplate.queryForList(sql, Integer.class);
+
+        System.out.println("Fk unidade é " + idMaquinas);
+        return idMaquinas;
+    }
+
+    public List<Integer> buscarFkUnidadeNuvem(Integer fkMaquina){
+        Conexao conexao = new Conexao();
+        JdbcTemplate jdbcTemplate = conexao.getConexaoDoBanco();
+
+        String sql = "SELECT m.idmaquina\n" +
+                "FROM UnidadeMedida um\n" +
+                "JOIN Maquina m ON um.fkMaquina = m.idMaquina\n" +
+                "WHERE m.idmaquina = " + fkMaquina;
+
+        List<Integer> idMaquinas = jdbcTemplate.queryForList(sql, Integer.class);
+
+        System.out.println("Fk unidade é " + idMaquinas);
+        return idMaquinas;
+    }
+
+
+    public void atualizarFkUnidadeMedida(Integer fk_maquina){
             Conexao conexao = new Conexao();
             JdbcTemplate con = conexao.getConexaoDoBanco();
 
@@ -354,37 +585,43 @@ public class ConexaoBancoDados extends Conexao{
         }
 
 
-        public void inserirMedicoes(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador){
+        public void inserirMedicoes(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador,
+                                    Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
+                                    Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
+                                    Integer fkBytesRecebidos , Integer fkBytesEnviados, Integer fkUnidadeMedida){
             Conexao conexao = new Conexao();
             JdbcTemplate con = conexao.getConexaoDoBanco();
             Date dataHoraAtual = new Date();
 
 
             // inserção de cpu
-           con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", processador.getPercentual_uso_do_processador(),dataHoraAtual, fk_computador, 7 , 1);
+           con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", processador.getPercentual_uso_do_processador(),dataHoraAtual, fk_computador, fkpercentualProcessador , fkUnidadeMedida);
 
            // inserção de disco
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getPorcentagem_de_Uso_do_Disco(),dataHoraAtual, fk_computador, 4 , 1);
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_Total_do_Disco(),dataHoraAtual, fk_computador, 5 , 1);
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_disponivel_do_disco(),dataHoraAtual, fk_computador, 6 , 1);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getPorcentagem_de_Uso_do_Disco(),dataHoraAtual, fk_computador, fkpercetDisco , fkUnidadeMedida);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_Total_do_Disco(),dataHoraAtual, fk_computador, fktamanhoDisco, fkUnidadeMedida);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_disponivel_do_disco(),dataHoraAtual, fk_computador, fkTamanhoDisponivelDisco , fkUnidadeMedida);
 
 
             // inserção de  Memoria
 
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_Disponivel(),dataHoraAtual, fk_computador, 3 , 1);
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_total(),dataHoraAtual, fk_computador, 2, 1);
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_em_uso(),dataHoraAtual, fk_computador, 1 , 1);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_Disponivel(),dataHoraAtual, fk_computador, fkMemoriaDipsonivel , fkUnidadeMedida);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_total(),dataHoraAtual, fk_computador,FkMemoriaUsada , fkUnidadeMedida);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_em_uso(),dataHoraAtual, fk_computador, fkmemoriaUso , fkUnidadeMedida);
 
             // inserção de rede
 
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_enviados(),dataHoraAtual, fk_computador, 9 , 1);
-            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_recebidos(),dataHoraAtual, fk_computador, 8 , 1);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_enviados(),dataHoraAtual, fk_computador, fkBytesEnviados , fkUnidadeMedida);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_recebidos(),dataHoraAtual, fk_computador, fkBytesRecebidos , fkUnidadeMedida);
 
 
 
         }
 
-        public void inserirMedicoesNuvem(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador){
+        public void inserirMedicoesNuvem(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador,
+                                         Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
+                                         Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
+                                         Integer fkBytesRecebidos , Integer fkBytesEnviados, Integer fkUnidadeMedida){
             ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
             JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
             Date dataHoraAtual = new Date();
@@ -392,24 +629,24 @@ public class ConexaoBancoDados extends Conexao{
             // nuvem
 
             // inserção de cpu
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", processador.getPercentual_uso_do_processador(),dataHoraAtual, fk_computador, 7 , 1);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", processador.getPercentual_uso_do_processador(),dataHoraAtual, fk_computador, fkpercentualProcessador , fkUnidadeMedida);
 
             // inserção de disco
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getPorcentagem_de_Uso_do_Disco(),dataHoraAtual, fk_computador, 4 , 1);
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_Total_do_Disco(),dataHoraAtual, fk_computador, 5 , 1);
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_disponivel_do_disco(),dataHoraAtual, fk_computador, 6 , 1);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getPorcentagem_de_Uso_do_Disco(),dataHoraAtual, fk_computador, fkpercetDisco , fkUnidadeMedida);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_Total_do_Disco(),dataHoraAtual, fk_computador, fktamanhoDisco, fkUnidadeMedida);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", disco.getTamanho_disponivel_do_disco(),dataHoraAtual, fk_computador, fkTamanhoDisponivelDisco , fkUnidadeMedida);
 
 
             // inserção de  Memoria
 
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_Disponivel(),dataHoraAtual, fk_computador, 3 , 1);
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_total(),dataHoraAtual, fk_computador, 2, 1);
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_em_uso(),dataHoraAtual, fk_computador, 1 , 1);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_Disponivel(),dataHoraAtual, fk_computador, fkMemoriaDipsonivel , fkUnidadeMedida);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_total(),dataHoraAtual, fk_computador,FkMemoriaUsada , fkUnidadeMedida);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", memoria.getMemoria_em_uso(),dataHoraAtual, fk_computador, fkmemoriaUso , fkUnidadeMedida);
 
             // inserção de rede
 
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_enviados(),dataHoraAtual, fk_computador, 9 , 1);
-            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_recebidos(),dataHoraAtual, fk_computador, 8 , 1);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_enviados(),dataHoraAtual, fk_computador, fkBytesEnviados , fkUnidadeMedida);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_recebidos(),dataHoraAtual, fk_computador, fkBytesRecebidos , fkUnidadeMedida);
 
 
         }
@@ -434,10 +671,86 @@ public class ConexaoBancoDados extends Conexao{
         return null;
     }
 
+    public Map<String , Integer> buscarFksConfiguracaoNuvem(){
+
+        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
+        JdbcTemplate con = conexaoNuvem.getConexaoDoBanco();
+
+
+        List<Map<String, Object>> resultado = con.queryForList(
+                "  SELECT MIN(idComponentes) AS idComponentes, ValorConfiguracao\n" +
+                        "        FROM Config\n" +
+                        "        WHERE ValorConfiguracao IN (\n" +
+                        "                'ConfiguracaoMemoriaUsada',\n" +
+                        "                'ConfiguracaoMemoriaEmUso',\n" +
+                        "                'ConfiguracaoMemoriaDisponivel',\n" +
+                        "                'ConfiguracaoPercentualUsoDisco',\n" +
+                        "                'ConfiguracaoTamanhoDisco',\n" +
+                        "                'ConfiguracaoTamanhoDisponivel',\n" +
+                        "                'ConfiguracaoPercentualUsoProcessador',\n" +
+                        "                'ConfiguracaoBytesRecebidos',\n" +
+                        "                'ConfiguracaoBytesEnviados'\n" +
+                        "        )\n" +
+                        "        GROUP BY ValorConfiguracao;"
+        );
+
+        Map<String, Integer> configuracoes = new HashMap<>();
+
+        for (Map<String, Object> row : resultado) {
+            int idComponente = (int) row.get("idComponentes");
+            String nomeConfiguracao = (String) row.get("ValorConfiguracao");
+
+            configuracoes.put(nomeConfiguracao, idComponente);
+        }
+
+        return configuracoes;
+
+
+    }
+    public Map<String, Integer> buscarFksConfiguracao() {
+        Conexao conexao = new Conexao();
+        JdbcTemplate con = conexao.getConexaoDoBanco();
+
+        List<Map<String, Object>> resultado = con.queryForList(
+                "SELECT MIN(idComponentes) AS idComponentes, ValorConfiguracao\n" +
+                        "FROM Config\n" +
+                        "WHERE ValorConfiguracao IN (\n" +
+                        "    'ConfiguracaoMemoriaUsada',\n" +
+                        "    'ConfiguracaoMemoriaEmUso',\n" +
+                        "    'ConfiguracaoMemoriaDisponivel',\n" +
+                        "    'ConfiguracaoPercentualUsoDisco',\n" +
+                        "    'ConfiguracaoTamanhoDisco',\n" +
+                        "    'ConfiguracaoTamanhoDisponivel',\n" +
+                        "    'ConfiguracaoPercentualUsoProcessador',\n" +
+                        "    'ConfiguracaoBytesRecebidos',\n" +
+                        "    'ConfiguracaoBytesEnviados'\n" +
+                        ")\n" +
+                        "GROUP BY ValorConfiguracao;"
+        );
+
+        Map<String, Integer> configuracoes = new HashMap<>();
+
+        for (Map<String, Object> row : resultado) {
+            int idComponente = (int) row.get("idComponentes");
+            String nomeConfiguracao = (String) row.get("ValorConfiguracao");
+
+            configuracoes.put(nomeConfiguracao, idComponente);
+        }
+
+        return configuracoes;
+    }
 
 
 
-    public void Alertas(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador) {
+
+    public void Alertas(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador, Integer fkUnidade,
+                        Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
+                        Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
+                        Integer fkBytesRecebidos , Integer fkBytesEnviados,
+                        Integer fkConfigMemoriaUsada, Integer fkConfigMemoriaemUso, Integer fkConfigMemoriaDisponivel, Integer fkConfigPercentDisco, Integer fkConfigTamanhoDisco,
+                        Integer fkConfigTamanhoDisponivelDisco, Integer fkconfigPercentualProcessador, Integer fkConfigBytesRecebidos,
+                        Integer fkConfigBytesEnviados) {
+
         Conexao conexao = new Conexao();
         JdbcTemplate con = conexao.getConexaoDoBanco();
         Date dataHoraAtual = new Date();
@@ -475,94 +788,98 @@ public class ConexaoBancoDados extends Conexao{
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkMemoriaDipsonivel, fkConfigMemoriaDisponivel);
+            con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkmemoriaUso, fkmemoriaUso);
+            con.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
         } else if (percentualDeUso >= limiteAlerta) {
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaAlerta, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkMemoriaDipsonivel, fkConfigMemoriaDisponivel);
+            con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaAlerta, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkmemoriaUso, fkmemoriaUso);
+            con.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
         }
-
         // alerta de disco
         if(disco.getPorcentagem_de_Uso_do_Disco() >=limiteCritico){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
+            con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
         }
         else if(disco.getPorcentagem_de_Uso_do_Disco() >= limiteAlerta){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual, fkUnidade, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
+            con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual, fkUnidade, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
         }
-
         // alerta de rede
         if(mediaDeRede < limiteInferiorRede){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual, fkBytesRecebidos , fkConfigBytesRecebidos);
+            con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual, fkBytesEnviados, fkConfigBytesEnviados);
         }
         else if(mediaDeRede > limiteSuperiorRede){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual, fkUnidade, fkBytesRecebidos,fkConfigBytesRecebidos);
+            con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual, fkUnidade, fkBytesEnviados,fkConfigBytesEnviados);
         }
 
         // alerta de processador
         if(processador.getPercentual_uso_do_processador() >= limiteAlerta){
             con.update("INSERT INTO MetricasAlertas " +
-                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                        "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaProcessador, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
-                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
-                    "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaProcessador, minimoMemoria, dataHoraAtual);
-        }
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteP, maximoMemoria, mensagemAlertaProcessador, minimoMemoria, dataHoraAtual , fkUnidade, fkpercentualProcessador, fkconfigPercentualProcessador);
+       }
         else if(processador.getPercentual_uso_do_processador() >= limiteCritico){
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaCriticoProcessador, minimoMemoria, dataHoraAtual);
-            conNuvem.update("INSERT INTO MetricasAlertas " +
-                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
-                    "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaCriticoProcessador, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteP, maximoMemoria, mensagemAlertaCriticoProcessador, minimoMemoria, dataHoraAtual, fkUnidade, fkpercentualProcessador, fkconfigPercentualProcessador);
         }
     }
-
-    public void AlertasNuvem(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador) {
+    public void AlertasNuvem(Memoria memoria,Disco disco,Rede rede,Processador processador, Integer fk_computador, Integer fkUnidade,
+                             Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
+                             Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
+                             Integer fkBytesRecebidos , Integer fkBytesEnviados,
+                             Integer fkConfigMemoriaUsada, Integer fkConfigMemoriaemUso, Integer fkConfigMemoriaDisponivel, Integer fkConfigPercentDisco, Integer fkConfigTamanhoDisco,
+                             Integer fkConfigTamanhoDisponivelDisco, Integer fkconfigPercentualProcessador, Integer fkConfigBytesRecebidos,
+                             Integer fkConfigBytesEnviados) {
         Date dataHoraAtual = new Date();
         Double percentualDeUso = (memoria.getMemoria_em_uso() / memoria.getMemoria_total()) * 100.0;
         ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
         JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
+
 
         Double limiteAlerta = 80.0;
         Double limiteCritico = 90.0;
@@ -592,54 +909,84 @@ public class ConexaoBancoDados extends Conexao{
             conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual);
-        } else if (percentualDeUso >= limiteAlerta) {
-         conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkMemoriaDipsonivel, fkConfigMemoriaDisponivel);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteM, maximoMemoria, mensagemMemoriaAlerta, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkmemoriaUso, fkmemoriaUso);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
+        } else if (percentualDeUso >= limiteAlerta) {
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkMemoriaDipsonivel, fkConfigMemoriaDisponivel);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkmemoriaUso, fkmemoriaUso);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
         }
-
         // alerta de disco
         if(disco.getPorcentagem_de_Uso_do_Disco() >=limiteCritico){
-          conNuvem.update("INSERT INTO MetricasAlertas " +
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoCritico, minimoMemoria, dataHoraAtual, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
         }
         else if(disco.getPorcentagem_de_Uso_do_Disco() >= limiteAlerta){
-        conNuvem.update("INSERT INTO MetricasAlertas " +
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual, fkUnidade, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteD, maximoMemoria, mensagemDiscoAlerta, minimoMemoria, dataHoraAtual, fkUnidade, fkUnidade, fkConfigPercentDisco, fkConfigPercentDisco);
         }
-
         // alerta de rede
         if(mediaDeRede < limiteInferiorRede){
-          conNuvem.update("INSERT INTO MetricasAlertas " +
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual, fkBytesRecebidos , fkConfigBytesRecebidos);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual, fkBytesEnviados, fkConfigBytesEnviados);
         }
         else if(mediaDeRede > limiteSuperiorRede){
-           conNuvem.update("INSERT INTO MetricasAlertas " +
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual, fkUnidade, fkBytesRecebidos,fkConfigBytesRecebidos);
+            conNuvem.update("INSERT INTO MetricasAlertas " +
+                    "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
+                    "VALUES " +
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual, fkUnidade, fkBytesEnviados,fkConfigBytesEnviados);
         }
 
         // alerta de processador
         if(processador.getPercentual_uso_do_processador() >= limiteAlerta){
-          conNuvem.update("INSERT INTO MetricasAlertas " +
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaProcessador, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteP, maximoMemoria, mensagemAlertaProcessador, minimoMemoria, dataHoraAtual , fkUnidade, fkpercentualProcessador, fkconfigPercentualProcessador);
         }
         else if(processador.getPercentual_uso_do_processador() >= limiteCritico){
-           conNuvem.update("INSERT INTO MetricasAlertas " +
+            conNuvem.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
                     "VALUES " +
-                    "(?, ?, ?, ?, ?, 1, 1, 1);", tipoComponenteP, maximoMemoria, mensagemAlertaCriticoProcessador, minimoMemoria, dataHoraAtual);
+                    "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteP, maximoMemoria, mensagemAlertaCriticoProcessador, minimoMemoria, dataHoraAtual, fkUnidade, fkpercentualProcessador, fkconfigPercentualProcessador);
         }
     }
 }

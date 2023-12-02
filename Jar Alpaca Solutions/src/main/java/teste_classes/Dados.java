@@ -7,7 +7,6 @@ import com.github.britooo.looca.api.group.processador.Processador;
 import com.github.britooo.looca.api.group.sistema.Sistema;
 import conexao_banco_dados.Conexao;
 import conexao_banco_dados.ConexaoBancoDados;
-import conexao_banco_dados.ConexaoNuvem;
 import disco.Disco;
 import maquina.Maquina;
 import mensageria.Alertas;
@@ -173,14 +172,17 @@ public class Dados {
                     Integer fk_maquina = null;
 
                     Integer fk_maquinaNuvem = null;
+                    Integer fkUnidadeUsuario = null;
 
 
                     if (insercaoRealizada.compareAndSet(false, true)) {
 
                         Map<String, Object> resultadoLocal = insertMaquina.buscar_empresa_e_unidade_local(cliente);
                         Integer idUnidadeLocal = resultadoLocal != null ? (Integer) resultadoLocal.get("idUnidade") : null;
-                        Integer idEmpresaLocal = resultadoLocal != null ? (Integer) resultadoLocal.get("idEmpresa") : null;
 
+                          Integer idEmpresaLocal = resultadoLocal != null ? (Integer) resultadoLocal.get("idEmpresa") : null;
+
+                        insertMaquina.obterFksTipoComponente();
                         Map<String, Object> resultadoNuvem = insertMaquina.buscar_empresa_e_unidade_nuvem(cliente);
                         Integer idUnidadeNuvem = resultadoNuvem != null ? (Integer) resultadoNuvem.get("idUnidade") : null;
                         Integer idEmpresaNuvem = resultadoNuvem != null ? (Integer) resultadoNuvem.get("idEmpresa") : null;
@@ -213,28 +215,124 @@ public class Dados {
                         );
 
                         // Inserir tipo de componente
-                        insertMaquina.inserir_tipo_componente();
-                        insertMaquina.inserir_tipo_componenteNuvem();
+
 
                         List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
                         fk_maquina = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
                         insertMaquina.atualizarFkUnidadeMedida(fk_maquina);
 
-                        List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem();
+
+                        List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem(fk_maquinaNuvem);
                         fk_maquinaNuvem = !idsMaquinaNuvem.isEmpty() ? idsMaquinaNuvem.get(0) : 0;
                         insertMaquina.atualizarFkUnidadeMedidaNuvem(fk_maquinaNuvem);
 
                     }
+                    Map<String, Integer> valoresFk = insertMaquina.obterFksTipoComponente();
+
+                    Integer fkMemoriaUsada = valoresFk.get("FkMemoriaUsada");
+                    Integer fkMemoriaEmUso = valoresFk.get("fkMemoriaEmUso");
+                    Integer fkMemoriaDipsonivel = valoresFk.get("fkMemoriaDisponivel");
+                    Integer fkpercetDisco =valoresFk.get("fkPercentualDisco");
+                    Integer fktamanhoDisco =valoresFk.get("fkTamanhoDisco");
+                    Integer fkTamanhoDisponivelDisco =valoresFk.get("fkTamanhoDisponivelDisco");
+                    Integer fkpercentualProcessador=valoresFk.get("fkPercentualProcessador");
+                    Integer fkBytesRecebidos =valoresFk.get("fkBytesRecebidos");
+                    Integer fkBytesEnviados=valoresFk.get("fkBytesEnviados");
+                    insertMaquina.InserirTabelaConfiguracoes(fk_maquina , fkMemoriaUsada , fkMemoriaEmUso ,
+                            fkMemoriaDipsonivel , fkpercetDisco , fktamanhoDisco , fkTamanhoDisponivelDisco , fkpercentualProcessador,
+                            fkBytesRecebidos , fkBytesEnviados);
+
+
+
+
+                    Map<String, Integer> valoresFkNuvem = insertMaquina.obterFksTipoComponenteNuvem();
+
+                    Integer fkMemoriaUsadaNuvem = valoresFk.get("FkMemoriaUsada");
+                    Integer fkMemoriaEmUsoNuvem = valoresFk.get("fkMemoriaEmUso");
+                    Integer fkMemoriaDipsonivelNuvem = valoresFk.get("fkMemoriaDisponivel");
+                    Integer fkpercetDiscoNuvem =valoresFk.get("fkPercentualDisco");
+                    Integer fktamanhoDiscoNuvem =valoresFk.get("fkTamanhoDisco");
+                    Integer fkTamanhoDisponivelDiscoNuvem =valoresFk.get("fkTamanhoDisponivelDisco");
+                    Integer fkpercentualProcessadorNuvem=valoresFk.get("fkPercentualProcessador");
+                    Integer fkBytesRecebidosNuvem =valoresFk.get("fkBytesRecebidos");
+                    Integer fkBytesEnviadosNuvem=valoresFk.get("fkBytesEnviados");
+
+                    insertMaquina.InserirTabelaConfiguracoesNuvem(fk_maquinaNuvem , fkMemoriaUsadaNuvem , fkMemoriaEmUsoNuvem ,
+                            fkMemoriaDipsonivelNuvem , fkpercetDiscoNuvem , fktamanhoDiscoNuvem , fkTamanhoDisponivelDiscoNuvem , fkpercentualProcessadorNuvem,
+                            fkBytesRecebidosNuvem , fkBytesEnviadosNuvem);
+
+
 
                     List<Integer> idsMaquina = insertMaquina.buscar_fk_maquina();
-                    List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem();
+
+
+                    List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem(fk_maquinaNuvem);
                     Integer fk = !idsMaquina.isEmpty() ? idsMaquina.get(0) : 0;
-                    Integer fkNuvem = !idsMaquinaNuvem.isEmpty() ? idsMaquinaNuvem.get(0) : 0;
-                    insertMaquina.inserirMedicoes(dados_memoria, rede, processador, disco01, fk);
-                    insertMaquina.inserirMedicoesNuvem(dados_memoria, rede, processador, disco01, fk);
-                    insertMaquina.InserirTabelaConfiguracoes();
-                    insertMaquina.InserirTabelaConfiguracoesNuvem(fkNuvem);
-//                    insertMaquina.Alertas(dados_memoria ,disco01 ,rede,processador, fk_maquina);
+                    List<Integer> fkUnidadeMaquina = insertMaquina.buscarFkUnidade(fk);
+                    Integer fkUnidade = !fkUnidadeMaquina.isEmpty() ? fkUnidadeMaquina.get(0) : 0;
+
+                    List<Integer> fkUnidadeMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem(fk_maquinaNuvem);
+                    Integer fkUnidadeNuvem = !fkUnidadeMaquinaNuvem.isEmpty() ? fkUnidadeMaquinaNuvem.get(0) : 0;
+
+                    Map<String, Integer> configuracoes = insertMaquina.buscarFksConfiguracao();
+
+
+                    int fkConfigMemoriaUsada = configuracoes.get("ConfiguracaoMemoriaUsada");
+                    int fkConfigMemoriaemUso = configuracoes.get("ConfiguracaoMemoriaEmUso");
+                    int fkConfigMemoriaDisponivel = configuracoes.get("ConfiguracaoMemoriaDisponivel");
+                    int fkConfigPercentDisco = configuracoes.get("ConfiguracaoPercentualUsoDisco");
+                    int fkConfigTamanhoDisco = configuracoes.get("ConfiguracaoTamanhoDisco");
+                    int fkConfigTamanhoDisponivelDisco = configuracoes.get("ConfiguracaoTamanhoDisponivel");
+                    int fkconfigPercentualProcessador = configuracoes.get("ConfiguracaoPercentualUsoProcessador");
+                    int fkConfigBytesRecebidos = configuracoes.get("ConfiguracaoBytesRecebidos");
+                    int fkConfigBytesEnviados = configuracoes.get("ConfiguracaoBytesEnviados");
+
+
+                    Map<String, Integer> configuracoesNuvem = insertMaquina.buscarFksConfiguracaoNuvem();
+
+
+                    int fkConfigMemoriaUsadaNuvem  = configuracoes.get("ConfiguracaoMemoriaUsada");
+                    int fkConfigMemoriaemUsoNuvem  = configuracoes.get("ConfiguracaoMemoriaEmUso");
+                    int fkConfigMemoriaDisponivelNuvem  = configuracoes.get("ConfiguracaoMemoriaDisponivel");
+                    int fkConfigPercentDiscoNuvem  = configuracoes.get("ConfiguracaoPercentualUsoDisco");
+                    int fkConfigTamanhoDiscoNuvem  = configuracoes.get("ConfiguracaoTamanhoDisco");
+                    int fkConfigTamanhoDisponivelDiscoNuvem  = configuracoes.get("ConfiguracaoTamanhoDisponivel");
+                    int fkconfigPercentualProcessadorNuvem  = configuracoes.get("ConfiguracaoPercentualUsoProcessador");
+                    int fkConfigBytesRecebidosNuvem  = configuracoes.get("ConfiguracaoBytesRecebidos");
+                    int fkConfigBytesEnviadosNuvem  = configuracoes.get("ConfiguracaoBytesEnviados");
+
+
+
+
+                    //Integer fkNuvem = !idsMaquinaNuvem.isEmpty() ? idsMaquinaNuvem.get(0) : 0;
+                    insertMaquina.inserirMedicoes(dados_memoria, rede, processador, disco01, fk, fkConfigMemoriaUsadaNuvem,
+                            fkMemoriaEmUsoNuvem, fkMemoriaDipsonivelNuvem, fkpercetDiscoNuvem , fktamanhoDiscoNuvem , fkTamanhoDisponivelDiscoNuvem, fkpercentualProcessadorNuvem,
+                            fkBytesRecebidosNuvem, fkBytesEnviadosNuvem, fkUnidade);
+
+                    insertMaquina.inserirMedicoesNuvem(dados_memoria, rede, processador, disco01, fk_maquinaNuvem, fkMemoriaUsadaNuvem,
+                            fkMemoriaEmUsoNuvem, fkMemoriaDipsonivelNuvem, fkpercetDiscoNuvem , fktamanhoDiscoNuvem , fkTamanhoDisponivelDiscoNuvem, fkpercentualProcessadorNuvem,
+                            fkBytesRecebidosNuvem, fkBytesEnviadosNuvem, fkUnidadeNuvem);
+
+
+
+                    insertMaquina.Alertas(
+                            dados_memoria, disco01, rede, processador,fk, fkUnidade, fkMemoriaUsada, fkMemoriaEmUso,
+                            fkMemoriaDipsonivel, fkpercetDisco, fktamanhoDisco, fkTamanhoDisponivelDisco, fkpercentualProcessador, fkBytesRecebidos, fkBytesEnviados, fkConfigMemoriaUsada,
+                            fkConfigMemoriaemUso, fkConfigMemoriaDisponivel, fkConfigPercentDisco, fkConfigTamanhoDisco,
+                            fkConfigTamanhoDisponivelDisco, fkconfigPercentualProcessador, fkConfigBytesRecebidos, fkConfigBytesEnviados
+                    );
+
+                    insertMaquina.AlertasNuvem(
+                            dados_memoria, disco01, rede, processador,fk_maquinaNuvem, fkUnidadeNuvem, fkMemoriaUsadaNuvem, fkMemoriaEmUsoNuvem,
+                            fkMemoriaDipsonivelNuvem, fkpercetDiscoNuvem, fktamanhoDiscoNuvem, fkTamanhoDisponivelDiscoNuvem, fkpercentualProcessadorNuvem,
+                            fkBytesRecebidosNuvem, fkBytesEnviadosNuvem, fkConfigMemoriaUsadaNuvem,
+                            fkConfigMemoriaemUsoNuvem, fkConfigMemoriaDisponivelNuvem, fkConfigPercentDiscoNuvem, fkConfigTamanhoDiscoNuvem,
+                            fkConfigTamanhoDisponivelDiscoNuvem, fkconfigPercentualProcessadorNuvem, fkConfigBytesRecebidosNuvem, fkConfigBytesEnviadosNuvem
+                    );
+
+
+                    //insertMaquina.InserirTabelaConfiguracoesNuvem(fkNuvem);
+//
                     try {
                         alerta.Alerta(insertMaquina.AlertaMemoria(fk));
                     } catch (IOException | InterruptedException e) {
