@@ -9,8 +9,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import processador.Processador;
 import rede.Rede;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 
 // acabei o jar aaaaaaaaaaaa
 
@@ -798,6 +803,7 @@ private static final String LOG_FILE_PATH = "logs_alerta.txt";
         Double minimoMemoria = 0.0;
         Double maximoMemoria = 100.0;
 
+
         // rede
 
         Integer limiteInferiorRede = 1;
@@ -819,7 +825,7 @@ private static final String LOG_FILE_PATH = "logs_alerta.txt";
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
                 //CHAMANDO LOG
-            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
+            Logger.getGlobal().info(String.format("[%s] Tipo: %s, Percentual de Uso: %.2f%% - %s", dataHoraAtual, tipoComponenteM, percentualDeUso, mensagemMemoriaCritico));
         } else if (percentualDeUso >= limiteAlerta) {
             con.update("INSERT INTO MetricasAlertas " +
                     "(TipoComponente, maximo, mensagemAlerta, minimo, dhHoraAlerta, fkUnidadeMedida, fkTipoComponente, fkConfiguracao) " +
@@ -834,7 +840,7 @@ private static final String LOG_FILE_PATH = "logs_alerta.txt";
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteM, maximoMemoria, mensagemMemoriaCritico, minimoMemoria, dataHoraAtual, fkUnidade, FkMemoriaUsada, fkConfigMemoriaUsada);
                 //CHAMANDO LOG
-            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
+            Logger.getGlobal().info(String.format("[%s] Tipo: %s, Percentual de Uso: %.2f%% - %s", dataHoraAtual, tipoComponenteM, percentualDeUso, mensagemMemoriaAlerta));
         }
         // alerta de disco
         if(disco.getPorcentagem_de_Uso_do_Disco() >=limiteCritico){
@@ -868,7 +874,7 @@ private static final String LOG_FILE_PATH = "logs_alerta.txt";
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemAlertaRede, minimoMemoria, dataHoraAtual, fkBytesEnviados, fkConfigBytesEnviados);
                 //CHAMANDO LOG
-            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
+            Logger.getGlobal().info(String.format("[%s] Tipo: %s, Percentual de Uso: %.2f%% - %s", dataHoraAtual, tipoComponenteR, mediaDeRede, mensagemCriticoRede));
         }
         else if(mediaDeRede > limiteSuperiorRede){
             con.update("INSERT INTO MetricasAlertas " +
@@ -880,7 +886,7 @@ private static final String LOG_FILE_PATH = "logs_alerta.txt";
                     "VALUES " +
                     "(?, ?, ?, ?, ?, ?, ?, ?);", tipoComponenteR, maximoMemoria, mensagemCriticoRede, minimoMemoria, dataHoraAtual, fkUnidade, fkBytesEnviados,fkConfigBytesEnviados);
               //CHAMANDO LOG
-            Logger.log(tipoComponenteM, percentualDeUso, mensagemMemoriaCritico);
+            Logger.getGlobal().info(String.format("[%s] Tipo: %s, Percentual de Uso: %.2f%% - %s", dataHoraAtual, tipoComponenteR, mediaDeRede, mensagemCriticoRede));
         }
 
         // alerta de processador

@@ -215,7 +215,6 @@ public class Dados {
                         insertMaquina.atualizarFkUnidadeMedidaNuvem(fk_maquinaNuvem);
 
                     }
-
                     List<Integer> idsMaquinaNuvem = insertMaquina.buscar_fk_maquinaNuvem(maquina01.getNomeMaquina());
                     fk_maquinaNuvem = !idsMaquinaNuvem.isEmpty() ? idsMaquinaNuvem.get(0) : 0;
                     Map<String, Integer> valoresFk = insertMaquina.obterFksTipoComponente();
@@ -325,7 +324,7 @@ public class Dados {
                 }
             };
             long delay_de_tempo = 0;
-            long tempo_carregar = 10000;
+            long tempo_carregar = 100;
 
             tempo.scheduleAtFixedRate(task, delay_de_tempo, tempo_carregar);
 
