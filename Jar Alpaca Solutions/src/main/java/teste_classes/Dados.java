@@ -295,7 +295,7 @@ public class Dados {
                     Integer fkConfigBytesRecebidosNuvem  = configuracoesNuvem.get("ConfiguracaoBytesRecebidos");
                     Integer fkConfigBytesEnviadosNuvem  = configuracoesNuvem.get("ConfiguracaoBytesEnviados");
 
-                    System.out.println();
+                    System.out.println(fk_maquinaNuvem);
 
                     insertMaquina.inserirMedicoes(dados_memoria, rede, processador, disco01, fk, fkConfigMemoriaUsadaNuvem,
                             fkMemoriaEmUsoNuvem, fkMemoriaDipsonivelNuvem, fkpercetDiscoNuvem , fktamanhoDiscoNuvem , fkTamanhoDisponivelDiscoNuvem, fkpercentualProcessadorNuvem,
@@ -304,6 +304,7 @@ public class Dados {
                     insertMaquina.inserirMedicoesNuvem(dados_memoria, rede, processador, disco01, fk_maquinaNuvem, fkMemoriaUsadaNuvem,
                             fkMemoriaEmUsoNuvem, fkMemoriaDipsonivelNuvem, fkpercetDiscoNuvem , fktamanhoDiscoNuvem , fkTamanhoDisponivelDiscoNuvem, fkpercentualProcessadorNuvem,
                             fkBytesRecebidosNuvem, fkBytesEnviadosNuvem, fkUnidadeNuvem, fkMediaMemoriaNuvem);
+
 
 
 
