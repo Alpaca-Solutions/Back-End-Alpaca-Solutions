@@ -343,16 +343,16 @@ public class ConexaoBancoDados extends Conexao{
         // Select geral para todos os tipos
         List<Map<String, Object>> results = con.queryForList(
                 "  WITH CTE AS (\n" +
-                        "                                        SELECT\n" +
-                        "                                        idTipoComponente,\n" +
-                        "                                        nomeTipo,\n" +
-                        "                                        ROW_NUMBER() OVER (PARTITION BY nomeTipo ORDER BY idTipoComponente) AS row_num\n" +
-                        "                                        FROM TipoComponente\n" +
-                        "                                        WHERE nomeTipo IN ('Memoria Usada', 'Memoria em Uso', 'Memoria Disponível', 'Percentual de uso do Disco', 'Tamanho do Disco', 'Tamanho Disponível', 'Percentual de Uso do Processador', 'Bytes Recebidos', 'Bytes Enviados' , 'Percentual de Memoria')\n" +
-                        "                                )\n" +
-                        "                                SELECT idTipoComponente, nomeTipo\n" +
-                        "                                FROM CTE\n" +
-                        "                          WHERE row_num = 1;");
+                        "    SELECT\n" +
+                        "        idTipoComponente,\n" +
+                        "        nomeTipo,\n" +
+                        "        ROW_NUMBER() OVER (PARTITION BY nomeTipo ORDER BY idTipoComponente) AS row_num\n" +
+                        "    FROM TipoComponente\n" +
+                        "    WHERE nomeTipo IN ('Memoria Usada', 'Memoria em Uso', 'Memoria Disponível', 'Percentual de uso do Disco', 'Tamanho do Disco', 'Tamanho Disponível', 'Percentual de Uso do Processador', 'Bytes Recebidos', 'Bytes Enviados', 'Percentual de Memoria' , 'Pacotes Enviados' , 'Pacotes Recebidos')\n" +
+                        ")\n" +
+                        "SELECT idTipoComponente, nomeTipo\n" +
+                        "FROM CTE\n" +
+                        "WHERE row_num = 1;\n");
 
         if (!resultPercentualDisco.isEmpty()) {
             // Se houver resultado para 'Percentual de uso do Disco', imprima as informações
@@ -368,7 +368,8 @@ public class ConexaoBancoDados extends Conexao{
         if (!results.isEmpty()) {
             Integer FkMemoriaUsada = null, fkMemoriaEmUso = null, fkMemoriaDisponivel = null, fkPercentualDisco = null,
                     fkTamanhoDisco = null, fkTamanhoDisponivelDisco = null, fkPercentualProcessador = null,
-                    fkBytesRecebidos = null, fkBytesEnviados = null, fkmediaMemoria = null;
+                    fkBytesRecebidos = null, fkBytesEnviados = null, fkmediaMemoria = null,
+            fkPacotesRecebidos = null , fkPacotesEnviados = null;
             // Se houver resultados para todos os tipos, processe-os
             for (Map<String, Object> coluna : results) {
                 String nomeTipo = (String) coluna.get("nomeTipo");
@@ -407,6 +408,12 @@ public class ConexaoBancoDados extends Conexao{
                     case "Percentual de Memoria":
                         fkmediaMemoria = idTipoComponente;
                         break;
+                    case "Pacotes Recebidos":
+                        fkPacotesRecebidos = idTipoComponente;
+                        break;
+                    case "Pacotes Enviados":
+                        fkPacotesEnviados = idTipoComponente;
+                        break;
                     default:
                         System.out.println("Tipo desconhecido: " + nomeTipo);
                         break;
@@ -422,6 +429,8 @@ public class ConexaoBancoDados extends Conexao{
             valoresFk.put("fkBytesRecebidos", fkBytesRecebidos);
             valoresFk.put("fkBytesEnviados", fkBytesEnviados);
             valoresFk.put("fkmediaMemoria", fkmediaMemoria);
+            valoresFk.put("fkPacotesRecebidos", fkPacotesRecebidos);
+            valoresFk.put("fkPacotesEnviados", fkPacotesEnviados);
 
 
         } else {
@@ -448,13 +457,12 @@ public class ConexaoBancoDados extends Conexao{
         // Select geral para todos os tipos
         List<Map<String, Object>> results = con.queryForList(
                 "SELECT idTipoComponente, nomeTipo\n" +
-                        "FROM TipoComponente\n" +
-                        "WHERE (nomeTipo, idTipoComponente) IN ( \n" +
-                        "    SELECT nomeTipo, MIN(idTipoComponente) AS idTipoComponente\n" +
-                        "    FROM TipoComponente\n" +
-                        "    WHERE nomeTipo IN ('Memoria Usada', 'Memoria em Uso', 'Memoria Disponível', 'Percentual de uso do Disco', 'Tamanho do Disco', 'Tamanho Disponível', 'Percentual de Uso do Processador', 'Bytes Recebidos', 'Bytes Enviados', 'Percentual de Memoria')\n" +
-                        "    GROUP BY nomeTipo\n" +
-                        ");");
+                        "                        FROM TipoComponente\n" +
+                        "                        WHERE (nomeTipo, idTipoComponente) IN (\n" +
+                        "                            SELECT nomeTipo, MIN(idTipoComponente) AS idTipoComponente\n" +
+                        "                            FROM TipoComponente\n" +
+                        "                            WHERE nomeTipo IN ('Memoria Usada', 'Memoria em Uso', 'Memoria Disponível', 'Percentual de uso do Disco', 'Tamanho do Disco', 'Tamanho Disponível', 'Percentual de Uso do Processador', 'Bytes Recebidos', 'Bytes Enviados', 'Percentual de Memoria', 'Pacotes Recebidos' , 'Pacotes Enviados')\n" +
+                        "                           GROUP BY nomeTipo);");
 
         if (!resultPercentualDisco.isEmpty()) {
             // Se houver resultado para 'Percentual de uso do Disco', imprima as informações
@@ -470,7 +478,8 @@ public class ConexaoBancoDados extends Conexao{
         if (!results.isEmpty()) {
             Integer FkMemoriaUsada = null, fkMemoriaEmUso = null, fkMemoriaDisponivel = null, fkPercentualDisco = null,
                     fkTamanhoDisco = null, fkTamanhoDisponivelDisco = null, fkPercentualProcessador = null,
-                    fkBytesRecebidos = null, fkBytesEnviados = null, fkmediaMemoria = null;
+                    fkBytesRecebidos = null, fkBytesEnviados = null, fkmediaMemoria = null,
+            fkPacotesRecebidos = null , fkPacotesEnviados = null;
 
             // Se houver resultados para todos os tipos, processe-os
             for (Map<String, Object> coluna : results) {
@@ -507,6 +516,13 @@ public class ConexaoBancoDados extends Conexao{
                         break;
                     case "Percentual de Memoria":
                         fkmediaMemoria = idTipoComponente;
+
+                        break;
+                    case "Pacotes Recebidos":
+                        fkPacotesRecebidos = idTipoComponente;
+                        break;
+                    case "Pacotes Enviados":
+                        fkPacotesEnviados = idTipoComponente;
                         break;
                     default:
                         System.out.println("Tipo desconhecido: " + nomeTipo);
@@ -523,6 +539,8 @@ public class ConexaoBancoDados extends Conexao{
             valoresFk.put("fkBytesRecebidos", fkBytesRecebidos);
             valoresFk.put("fkBytesEnviados", fkBytesEnviados);
             valoresFk.put("fkmediaMemoria", fkmediaMemoria);
+            valoresFk.put("fkPacotesRecebidos", fkPacotesRecebidos);
+            valoresFk.put("fkPacotesEnviados", fkPacotesEnviados);
 
         } else {
             System.out.println("Nenhum resultado encontrado para todos os tipos.");
@@ -614,7 +632,8 @@ public class ConexaoBancoDados extends Conexao{
         public void inserirMedicoes(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador,
                                     Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
                                     Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
-                                    Integer fkBytesRecebidos , Integer fkBytesEnviados, Integer fkUnidadeMedida, Integer fkmediaMemoria){
+                                    Integer fkBytesRecebidos , Integer fkBytesEnviados, Integer fkUnidadeMedida, Integer fkmediaMemoria,
+                                    Integer fkPacotesRecebidos , Integer fkPacotesEnivados){
             Conexao conexao = new Conexao();
             JdbcTemplate con = conexao.getConexaoDoBanco();
             Date dataHoraAtual = new Date();
@@ -642,6 +661,10 @@ public class ConexaoBancoDados extends Conexao{
             con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_enviados(),dataHoraAtual, fk_computador, fkBytesEnviados , fkUnidadeMedida);
             con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_recebidos(),dataHoraAtual, fk_computador, fkBytesRecebidos , fkUnidadeMedida);
 
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_pacotes_enviados(),dataHoraAtual, fk_computador, fkPacotesEnivados , fkUnidadeMedida);
+            con.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_pacotes_recebidos(),dataHoraAtual, fk_computador, fkPacotesRecebidos , fkUnidadeMedida);
+
+
 
 
         }
@@ -649,7 +672,7 @@ public class ConexaoBancoDados extends Conexao{
         public void inserirMedicoesNuvem(Memoria memoria , Rede rede , Processador processador, Disco disco, Integer fk_computador,
                                          Integer FkMemoriaUsada, Integer fkmemoriaUso , Integer fkMemoriaDipsonivel , Integer fkpercetDisco ,
                                          Integer fktamanhoDisco , Integer fkTamanhoDisponivelDisco , Integer fkpercentualProcessador,
-                                         Integer fkBytesRecebidos , Integer fkBytesEnviados, Integer fkUnidadeMedida,  Integer fkmediaMemoria){
+                                         Integer fkBytesRecebidos , Integer fkBytesEnviados, Integer fkUnidadeMedida,  Integer fkmediaMemoria,  Integer fkPacotesRecebidos , Integer fkPacotesEnivados){
             ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
             JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
             Date dataHoraAtual = new Date();
@@ -678,6 +701,9 @@ public class ConexaoBancoDados extends Conexao{
 
             conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_enviados(),dataHoraAtual, fk_computador, fkBytesEnviados , fkUnidadeMedida);
             conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_bytes_recebidos(),dataHoraAtual, fk_computador, fkBytesRecebidos , fkUnidadeMedida);
+
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_pacotes_enviados(),dataHoraAtual, fk_computador, fkPacotesEnivados , fkUnidadeMedida);
+            conNuvem.update("insert into Medicoes (valor, data_hora_leitura, id_computador, fkTipoComponenteID, fkUnidadeMedidaID) values (? ,?, ? , ? , ?)", rede.getQuantidade_pacotes_recebidos(),dataHoraAtual, fk_computador, fkPacotesRecebidos , fkUnidadeMedida);
 
 
         }
