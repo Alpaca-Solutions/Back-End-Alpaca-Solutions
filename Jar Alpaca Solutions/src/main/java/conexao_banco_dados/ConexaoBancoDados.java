@@ -119,6 +119,29 @@ public class ConexaoBancoDados extends Conexao{
     }
 
 
+    public Integer buscarFkEnderecoNuvem(Cliente cliente) {
+        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
+        JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
+
+
+        Integer idEndereco = conNuvem.queryForObject(
+                "select top 1 endereco.idendereco from empresa join endereco on idEndereco = fk_endereco where empresa.email = ? and senha = ?;",
+                new Object[]{cliente.getEmail(), cliente.getSenha()},
+                Integer.class
+        );
+
+        return idEndereco;
+    }
+
+    public void inserirDadosUnidadeNuvem(String nomeUnidade , Integer fkEndereco ){
+        ConexaoNuvem conexaoNuvem = new ConexaoNuvem();
+        JdbcTemplate conNuvem = conexaoNuvem.getConexaoDoBanco();
+
+        conNuvem.update("INSERT INTO UNIDADE (nomeInstituicao,fkEndereco , ativo) VALUES (?, ?)", nomeUnidade,fkEndereco, 1);
+
+    }
+
+
 
 
     public void inserir_dados_maquina(String nome_maquina, String ipMaquina, String so, Boolean status, Integer fk_empresa, Integer fKUnidade) {
