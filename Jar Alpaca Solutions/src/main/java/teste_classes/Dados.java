@@ -48,6 +48,7 @@ public class Dados {
         Integer resultado_select_cliente = busca_cliente.Busca_Cliente(cliente);
 
 
+
         if(resultado_select_cliente == 200) {
             ConexaoBancoDados insert = new ConexaoBancoDados();
             Map<String, Object> resultado = insert.buscar_empresa_e_unidade_nuvem(cliente);
